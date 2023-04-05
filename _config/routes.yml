@@ -1,0 +1,7 @@
+---
+Name: silverstripe-fuse-search-routes
+After: framework/routes#coreroutes
+---
+SilverStripe\Control\Director:
+  rules:
+    'api/search': 'Pixelpoems\FuseSearch\Controllers\SearchController'

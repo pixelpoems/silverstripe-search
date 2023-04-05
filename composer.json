@@ -1,0 +1,48 @@
+{
+    "name": "pixelpoems/silverstripe-fuse-search",
+    "type": "silverstripe-vendormodule",
+    "description": "Silverstripe Search-Module including fuse.js.",
+    "keywords": [
+        "silverstripe",
+        "search"
+    ],
+    "authors": [
+        {
+            "name": "Bettina Bröthaler",
+            "homepage": "pixelpoems.com",
+            "role": "Lead Developer"
+        }
+    ],
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "require": {
+        "silverstripe/cms": "^4",
+        "silverstripe/framework": "^4.0",
+        "tractorcow/silverstripe-fluent": "~6.0",
+        "silverstripe/vendor-plugin": "^1.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^5.7"
+    },
+    "autoload": {
+        "psr-4": {
+            "Pixelpoems\\FuseSearch\\": "src/"
+        }
+    },
+    "config": {
+        "allow-plugins": {
+            "composer/installers": true,
+            "silverstripe/vendor-plugin": true
+        }
+    },
+    "extra": {
+        "installer-name": "silverstripe-fuse-search",
+        "branch-alias": {
+            "dev-main": "1.x-dev"
+        },
+        "expose": [
+            "client/dist/"
+        ]
+    },
+    "license": "BSD-3-Clause"
+}
