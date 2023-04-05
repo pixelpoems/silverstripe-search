@@ -18,7 +18,6 @@
     "require": {
         "silverstripe/cms": "^4",
         "silverstripe/framework": "^4.0",
-        "tractorcow/silverstripe-fluent": "~6.0",
         "silverstripe/vendor-plugin": "^1.0"
     },
     "require-dev": {
