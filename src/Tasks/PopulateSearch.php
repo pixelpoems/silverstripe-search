@@ -19,13 +19,14 @@ class PopulateSearch extends BuildTask
 
     private static string $segment = "PopulateSearch";
 
+    // ToDo: exclude Elements
     private static array $exclude_elements = [];
 
     private static string $path = './_resources/search/';
 
     private static array $prevent_lang_from_index = []; // e.g. 'de_AT'
 
-    private static array $index_keys = [
+    private static array $keys = [
         'title'
     ];
 

@@ -11,9 +11,9 @@ class SearchIndexExtension extends DataExtension
     public function getSearchIndexData(): array
     {
         $data = [];
-        $extra_keys = Config::forClass(PopulateSearch::class)->get('index_keys');
+        $keys = Config::forClass(PopulateSearch::class)->get('keys');
 
-        foreach ($extra_keys as $key) {
+        foreach ($keys as $key) {
             $data[$key] = null;
         }
 
