@@ -29,19 +29,20 @@ document.addEventListener("DOMContentLoaded", async function (e) {
 function handleSearch(fuse, list, searchValue) {
     let result = fuse.search(searchValue);
 
-    let ids = result.filter(item => {
+    let items = result.filter(item => {
         return item.score < 0.5;
     }).map((item) => {
-        return item.item.id;
+        return item.item;
     });
 
-    let url = 'api/search/result?locale=' + locale + '&ids=' + ids;
-    downloadUrl(url, (data) => {
+    let url = 'api/search/result?locale=' + locale;
+
+    downloadUrl(url, JSON.stringify(items),(response) => {
         let resultElement = document.getElementById('js-result-list');
         if(!resultElement) return;
 
         resultElement.textContent = '';
-        resultElement.innerHTML = data;
+        resultElement.innerHTML = response;
     })
 }
 

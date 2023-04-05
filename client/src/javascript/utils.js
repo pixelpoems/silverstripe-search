@@ -1,4 +1,4 @@
-export function downloadUrl(url, callback) {
+export function downloadUrl(url, body, callback) {
     let request = window.ActiveXObject ? new ActiveXObject('Microsoft.XMLHTTP') : new XMLHttpRequest;
 
     request.onreadystatechange = function () {
@@ -8,6 +8,6 @@ export function downloadUrl(url, callback) {
         }
     };
 
-    request.open('GET', url, true);
-    request.send(null);
+    request.open('POST', url, true);
+    request.send(body);
 }

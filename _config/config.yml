@@ -1,0 +1,7 @@
+---
+Name: silverstripe-fuse-search
+---
+
+Page:
+  extensions:
+    - Pixelpoems\FuseSearch\Extensions\SearchIndexExtension

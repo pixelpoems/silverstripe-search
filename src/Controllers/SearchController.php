@@ -2,46 +2,76 @@
 
 namespace Pixelpoems\FuseSearch\Controllers;
 
+use DNADesign\Elemental\Models\BaseElement;
 use Page;
 use SilverStripe\Control\Controller;
 use SilverStripe\Control\HTTPRequest;
+use SilverStripe\Control\HTTPResponse;
 use SilverStripe\Core\Convert;
 use SilverStripe\ORM\ArrayList;
+use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\FieldType\DBHTMLText;
 use TractorCow\Fluent\State\FluentState;
 
 class SearchController extends Controller
 {
+    private static bool $enable_fluent = false;
+    private static bool $enable_elemental = false;
+
     private static array $allowed_actions = [
         'result'
     ];
 
     public function result(HTTPRequest $request): DBHTMLText|bool|string
     {
-        if($request->getVar('locale')) {
+        if($this->config()->get('enable_fluent') && $request->getVar('locale')) {
             $requestHTMLLocale = Convert::raw2sql($request->getVar('locale'));
             $locale = str_replace('-', '_', $requestHTMLLocale);
         } else $locale = null;
 
-        $ids = $request->getVar('ids');
-        $pages = Page::get()->byIDs(explode(',', $ids));
-        $pageArray = ArrayList::create();
+        $data = json_decode($request->getBody());
 
-        foreach ($pages as $page) {
-            $pageArray->push($page);
+        if($this->config()->get('enable_fluent') && $locale) {
+            $list = FluentState::singleton()->withState(function (FluentState $state) use ($locale, $data) {
+                $state->setLocale($locale);
+
+                return $this->getData($data);
+            });
+        } else {
+            $list = $this->getData($data);
         }
 
-        return $this->getPageResponse($locale, $pageArray);
+        $this->extend('updateList', $list);
+
+        return $this->generateResponse($locale, $list);
     }
 
-    private function getPageResponse($locale, $pageArray)
+    private function getData($data): ArrayList
     {
-        return FluentState::singleton()->withState(function(FluentState $state) use ($locale, $pageArray) {
-            $state->setLocale($locale);
+        $list = ArrayList::create();
 
+        foreach ($data as $item) {
+            $entity = DataObject::get($item->class)->byID($item->id);
+            if($entity) $list->push($entity);
+        }
+
+        return $list;
+    }
+
+    private function generateResponse($locale, $list)
+    {
+        if($this->config()->get('enable_fluent')) {
+            return FluentState::singleton()->withState(function(FluentState $state) use ($locale, $list) {
+                $state->setLocale($locale);
+
+                return $this->customise([
+                    'List' => $list
+                ])->renderWith('Pixelpoems\\FuseSearch\\Ajax\\SearchList');
+            });
+        } else {
             return $this->customise([
-                'Pages' => $pageArray
+                'List' => $list
             ])->renderWith('Pixelpoems\\FuseSearch\\Ajax\\SearchList');
-        });
+        }
     }
 }

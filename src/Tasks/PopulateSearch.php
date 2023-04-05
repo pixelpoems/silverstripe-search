@@ -1,67 +1,107 @@
 <?php
 namespace Pixelpoems\FuseSearch\Tasks;
 
+use DNADesign\Elemental\Models\BaseElement;
+use Page;
+use Pixelpoems\FuseSearch\Controllers\SearchController;
+use SilverStripe\Core\Config\Config;
 use SilverStripe\Dev\BuildTask;
+use SilverStripe\ORM\DataObject;
 use SilverStripe\Versioned\Versioned;
 use TractorCow\Fluent\Model\Locale;
 use TractorCow\Fluent\State\FluentState;
 
 class PopulateSearch extends BuildTask
 {
-    /** @var string Task title */
     protected $title = 'Populate Search';
 
-    /** @var string Task description */
-    protected $description = 'Re-create and prepare the search json at each run.';
+    protected $description = 'Crate, Re-Create and prepare the silverstripe fuse search index at each run.';
 
     private static string $segment = "PopulateSearch";
+
+    private static array $exclude_elements = [];
+
+    private static string $path = './_resources/search/';
+
+    private static array $prevent_lang_from_index = []; // e.g. 'de_AT'
+
+    private static array $index_keys = [
+        'title'
+    ];
 
     /**
      * @inheritDoc
      */
     public function run($request)
     {
-        $locales = Locale::get();
+        $config = Config::inst()->get(SearchController::class);
 
-        foreach ($locales as $locale) {
-            FluentState::singleton()->withState(function(FluentState $state) use ($locale) {
-                $state->setLocale($locale->Locale);
+        if($config['enable_fluent']) {
+            $this->log('Fluent is enabled.<br /><hr />');
 
-                $pages = Versioned::get_by_stage('Page', 'Live')
-                    ->filter(['ShowInSearch' => true]);
+            $prevent_lang_from_index = $this->config()->get('prevent_lang_from_index');
 
-                $pageData = [];
-                foreach($pages as $page) {
-                    $pageData[] = $this->preparePageData($page);
-                }
+            if($prevent_lang_from_index) {
+                $locales = Locale::get()->exclude(['Locale' => $prevent_lang_from_index]);
+                $this->log('There are some languages prevented from indexing: ' . implode(', ', $prevent_lang_from_index) . '<br /><hr />');
+            } else {
+                $locales = Locale::get();
+            }
 
-                $this->writeSearchFile($pageData, $locale->Locale);
-            });
+            foreach ($locales as $locale) {
+                FluentState::singleton()->withState(function(FluentState $state) use ($locale, $config) {
+                    $state->setLocale($locale->Locale);
+                    $locale = str_replace('-', '_', $locale->Locale);
+                    $this->populate($config, $locale . '.json', $locale);
+                });
+            }
+        } else {
+            $this->populate($config);
         }
+        $this->log('Successfully written search index!');
     }
 
-    public function log($msg) {
+    private function populate($config, string $fileName = null, string $locale = null)
+    {
+        $data = $this->getData(Page::class);
+
+        if($config['enable_elemental']) {
+            $elements = $this->getData(BaseElement::class);
+            $data = array_merge($data, $elements);
+        }
+
+        if(!$fileName) $fileName = 'search-index.json';
+        $fileName = $this->config()->get('path') . $fileName;
+        $this->log('Data Entities: ' . count($data));
+        $this->writeSearchFile($data, $fileName, $locale);
+    }
+
+    private function getData($class): array
+    {
+        $objects = Versioned::get_by_stage($class, 'Live');
+
+        if($class === Page::class) {
+            $objects = Versioned::get_by_stage($class, 'Live')
+                ->filter(['ShowInSearch' => true]);
+        }
+
+        $data = [];
+        foreach($objects as $object) {
+            $data[] = DataObject::get_by_id($class, $object->ID)->getSearchIndexData();
+        }
+        return $data;
+    }
+
+    private function log($msg) {
         echo $msg . '<br />';
     }
 
-    private function preparePageData($page): array
+    private function writeSearchFile($data, string $fileName, string $locale = null)
     {
-        return [
-            'id' => $page->ID,
-            'title' => $page->Title,
-            'b2bTitle' => $page->B2BTitle,
-            'summary' => $page->Summary
-        ];
-    }
-
-    private function writeSearchFile($data, string $locale)
-    {
-        $locale = str_replace('-', '_', $locale);
-        $path = './_resources/search/';
-        $fileName = $path . $locale . '.json';
-
         // Check if folder exists
-        if(!is_dir($path)) mkdir($path, 0755, true);
+        if(!is_dir($this->config()->get('path'))) {
+            mkdir($this->config()->get('path'), 0755, true);
+        }
 
         // Check if file exists and clean content
         if(file_exists($fileName)) file_put_contents($fileName, '');
@@ -70,7 +110,9 @@ class PopulateSearch extends BuildTask
         fwrite($file, json_encode($data));
         fclose($file);
 
-        $this->log('<b>' . $locale . '</b>: SUCCESS');
-        $this->log($fileName . '<br /><hr /><br />');
+        if($locale) $this->log('<b>' . $locale . '</b>: SUCCESS');
+        else $this->log('SUCCESS');
+
+        $this->log($fileName . '<br /><hr />');
     }
 }
