@@ -1,0 +1,25 @@
+.hidden {
+    display: none;
+}
+
+#inline-search {
+    width: unset;
+}
+
+#js-result-list.inline-search {
+    position: absolute;
+    margin-top: 6rem;
+    border: 2px solid black;
+    background: white;
+    z-index: 100;
+
+    ul {
+        flex-direction: column;
+        max-height: 50vh;
+        overflow-y: auto;
+
+        li {
+            border-bottom: 1px solid black;
+        }
+    }
+}

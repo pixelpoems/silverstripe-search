@@ -1,4 +1,4 @@
 .idea
 vendor/
 resources
-/node_modues
+node_modues/

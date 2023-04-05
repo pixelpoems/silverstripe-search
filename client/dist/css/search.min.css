@@ -1,0 +1,1 @@
+.hidden{display:none}#inline-search{width:auto;width:initial}#js-result-list.inline-search{position:absolute;margin-top:6rem;border:2px solid #000;background:#fff;z-index:100}#js-result-list.inline-search ul{flex-direction:column;max-height:50vh;overflow-y:auto}#js-result-list.inline-search ul li{border-bottom:1px solid #000}
