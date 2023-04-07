@@ -1,11 +1,13 @@
 <div>
-    Matches: $Pages.Count
+    Matches: $List.Count
 </div>
 
-<% if $Pages %>
+<% if $List %>
     <ul>
-        <% loop $Pages %>
-            <li><a href="$Link">$Title</a></li>
+        <% loop $List %>
+            <li>
+                <a href="$Link">$Title</a>
+            </li>
         <% end_loop %>
     </ul>
 <% end_if %>
