@@ -4,6 +4,7 @@ namespace Pixelpoems\FuseSearch\Tasks;
 use DNADesign\Elemental\Models\BaseElement;
 use Page;
 use Pixelpoems\FuseSearch\Controllers\SearchController;
+use SilverStripe\Core\ClassInfo;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Dev\BuildTask;
 use SilverStripe\ORM\DataObject;
@@ -26,7 +27,7 @@ class PopulateSearch extends BuildTask
 
     private static array $prevent_lang_from_index = []; // e.g. 'de_AT'
 
-    private static array $keys = [
+    private static array $index_keys = [
         'title'
     ];
 
@@ -67,8 +68,20 @@ class PopulateSearch extends BuildTask
         $data = $this->getData(Page::class);
 
         if($config['enable_elemental']) {
-            $elements = $this->getData(BaseElement::class);
-            $data = array_merge($data, $elements);
+            $exclude_elements = (array) $this->config()->get('exclude_elements');
+            $availableElementClasses = ClassInfo::subclassesFor(BaseElement::class);
+
+            foreach ($availableElementClasses as $class) {
+                if($class !== BaseElement::class) {
+                    /** @var BaseElement $inst */
+                    $inst = singleton($class);
+
+                    if (!in_array($class, $exclude_elements ?? []) && $inst->canCreate()) {
+                        $elements = $this->getData($class);
+                        $data = array_merge($data, $elements);
+                    }
+                }
+            }
         }
 
         if(!$fileName) $fileName = 'search-index.json';
