@@ -8,6 +8,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         search.classList.remove('hidden');
         openBtn.style.display = 'none';
+        document.querySelector('#search-pattern').focus();
 
         let closeBtn = search.querySelector('#close-inline-search-btn');
         if(closeBtn) {

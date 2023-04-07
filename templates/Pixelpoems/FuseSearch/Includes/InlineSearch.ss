@@ -9,9 +9,7 @@
             <button id="search-btn">Search</button>
             <button id="close-inline-search-btn">Close</button>
 
-            <div id="js-result-list" class="inline-search">
-                <div></div>
-            </div>
+            <div id="js-result-list" class="inline-search hidden"></div>
         </div>
 
         <button id="open-inline-search-btn" class="btn">

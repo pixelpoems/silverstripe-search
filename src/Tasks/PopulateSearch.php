@@ -84,7 +84,7 @@ class PopulateSearch extends BuildTask
             }
         }
 
-        if(!$fileName) $fileName = 'search-index.json';
+        if(!$fileName) $fileName = 'index.json';
         $fileName = $this->config()->get('path') . $fileName;
         $this->log('Data Entities: ' . count($data));
         $this->writeSearchFile($data, $fileName, $locale);

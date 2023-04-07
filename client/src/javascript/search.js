@@ -1,10 +1,7 @@
 import Fuse from "fuse.js";
 import {decodeHtmlSpecialChars, downloadUrl} from "./utils";
-
 let locale = document.querySelector('html').getAttribute('lang');
 locale = locale.replace('-', '_');
-const path = './_resources/search/';
-const fileName = path + locale + '.json';
 
 document.addEventListener("DOMContentLoaded", async function (e) {
 
@@ -14,7 +11,9 @@ document.addEventListener("DOMContentLoaded", async function (e) {
     const searchInput = document.querySelector('input#search-pattern');
     if(!searchInput) return;
 
-    const list = await getData();
+    const list = await fetchData(locale);
+    if(!list) return;
+
     const fuse = new Fuse(list, getOptions());
 
     searchInput.addEventListener('keyup', () => {
@@ -35,7 +34,8 @@ function handleSearch(fuse, list, searchValue) {
         return item.item;
     });
 
-    let url = 'api/search/result?locale=' + locale;
+    let url = 'api/search/result'
+    if(locale) url += '?locale=' + locale;
 
     downloadUrl(url, JSON.stringify(items),(response) => {
         let resultElement = document.getElementById('js-result-list');
@@ -74,8 +74,16 @@ function getOptions() {
     };
 }
 
-async function getData() {
-    return await fetch(fileName)
-        .then(response => response.json())
-        .then(json => { return json });
+async function fetchData(filename) {
+    const path = './_resources/search/' + filename + '.json';
+
+    return await fetch(path)
+        .then(async (res) => {
+            if (res.ok) {
+                return await res.json();
+            } else if (res.status === 404 && locale !== 'index') {
+                return await fetchData('index')
+            }
+            return null;
+        });
 }

@@ -27,7 +27,7 @@ Pixelpoems\FuseSearch\Tasks\PopulateSearch:
   keys: # Default keys witch will be populated within the json index file
     - title # Title will be added by default if nothing else is defined
 ```
-By default, your index file is named `search-index.json`.
+By default, your index file is named `index.json` and will be placed at `/public/_resources/search/`
 
 To Update or set the index keys based on the Class you can extend the Class and use the following method to set the values. If you set extra values here, they won't get noticed by the js logic. Only the predefined keys will be recognised. `$data`will contain all preconfigued keys.
 ```php
