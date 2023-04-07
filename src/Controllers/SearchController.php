@@ -49,12 +49,12 @@ class SearchController extends Controller
     private function getData($data): ArrayList
     {
         $list = ArrayList::create();
-
         foreach ($data as $item) {
-            $entity = DataObject::get($item->class)->byID($item->id);
-            if($entity) $list->push($entity);
+            if(isset($item->class)) {
+                $entity = DataObject::get($item->class)->byID($item->id);
+                if($entity) $list->push($entity);
+            }
         }
-
         return $list;
     }
 
