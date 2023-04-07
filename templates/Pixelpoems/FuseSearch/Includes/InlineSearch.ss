@@ -17,6 +17,9 @@
         <button id="open-inline-search-btn" class="btn">
             OPEN SEARCH
         </button>
+
+        <input type="hidden" id="search-index-keys" value="$SearchKeys" />
+
     </li>
 <% end_if %>
 

@@ -14,10 +14,10 @@
             </div>
         <% end_if %>
         <div id="js-result-list">
-            <div>
-
-            </div>
+            <div></div>
         </div>
-
     </div>
+
+    <input type="hidden" id="search-index-keys" value="$SearchKeys" />
+
 </article>

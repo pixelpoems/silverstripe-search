@@ -2,6 +2,7 @@
 
 namespace Pixelpoems\FuseSearch\Controllers;
 
+use Pixelpoems\FuseSearch\Services\SearchService;
 use SilverStripe\View\Requirements;
 
 class SearchPageController extends \PageController

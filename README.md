@@ -36,6 +36,8 @@ public function updateSearchIndexData(array &$data) {
 }
 ```
 
+## Override Template Files
+
 ## Enable Search on DataObjects
 TODO
 
