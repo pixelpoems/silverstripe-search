@@ -29,14 +29,23 @@ Pixelpoems\FuseSearch\Tasks\PopulateSearch:
 ```
 By default, your index file is named `search-index.json`.
 
-To Update or set the index keys based on the Class you can extend the Class and use the following method to set the values. If you set extra values here, they wont get noticed by the js logic. Only the predefined keys will be recognised. `$data`will contain all preconfigued keys.
+To Update or set the index keys based on the Class you can extend the Class and use the following method to set the values. If you set extra values here, they won't get noticed by the js logic. Only the predefined keys will be recognised. `$data`will contain all preconfigued keys.
 ```php
 public function updateSearchIndexData(array &$data) {
     $data['content'] = $this->owner->Content;
 }
 ```
 
-## Override Template Files
+## Overwrite Template Files
+To overwrite the default search templates you can create a `Pixelpoems/FuseSearch` folder within your project templates.
+* `Pixelpoems/FuseSearch/Ajax/SearchList.ss` for the rendered Search result.
+* `Pixelpoems/FuseSearch/Includes/InlineSearch.ss` for inline Search output.
+* `Pixelpoems/FuseSearch/Pages/Layout/SearchPage.ss` for your custom Search Page.
+
+ATTENTION: If you overwrite the templates, make sure that the required js files are included within the templates or will be included via a Controller. Also make sure that the following input is included if you have custom index keys defined in your `PopulateSearch` Task:
+```html
+<input type="hidden" id="search-index-keys" value="$SearchKeys" />
+```
 
 ## Enable Search on DataObjects
 TODO
