@@ -43,6 +43,10 @@ function handleSearch(fuse, list, searchValue) {
 
         resultElement.textContent = '';
         resultElement.innerHTML = response;
+
+        if(resultElement.classList.contains('hidden')) {
+            resultElement.classList.remove('hidden');
+        }
     })
 }
 
