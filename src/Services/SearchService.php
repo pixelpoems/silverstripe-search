@@ -10,7 +10,7 @@ class SearchService
     private static bool $enable_elemental = false;
 
 
-    static function getSearchKeysForTemplate()
+    static function getSearchKeysForTemplate(): string
     {
         $keys = Config::inst()->get(PopulateSearch::class, 'index_keys');
         $keys = json_encode($keys);
