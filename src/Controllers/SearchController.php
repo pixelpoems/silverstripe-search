@@ -62,6 +62,7 @@ class SearchController extends Controller
 
     private function generateResponse($locale, $list)
     {
+        //ToDo: Update Customise Array to add custom Variables for Template
         if($this->config()->get('enable_fluent')) {
             return FluentState::singleton()->withState(function(FluentState $state) use ($locale, $list) {
                 $state->setLocale($locale);
