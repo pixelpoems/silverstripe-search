@@ -47,7 +47,7 @@ function handleSearch(searchValue) {
     let result = fuse.search(searchValue);
 
     let items = result.filter(item => {
-        return item.score < 0.5;
+        return item.score < 0.3;
     }).map((item) => {
         return item.item;
     });
