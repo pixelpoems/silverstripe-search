@@ -8,6 +8,7 @@ You can use it in combination with Silverstripe [Elemental](https://github.com/s
 * [Installation](#installation)
 * [Configuration](#configuration)
 * [Overwrite Template Files](#overwrite-template-files)
+* [Inline Search](#inline-search)
 * [Enable Search on DataObjects](#enable-search-on-dataobjects)
 * [Config to enable Elemental](#config-to-enable-elemental)
 * [Config to enable Fluent](#config-to-enable-fluent)
@@ -67,6 +68,9 @@ public function updateAjaxTemplateData(&$data) {
 }
 ```
 All the Variables, that are added here can be accessed in your custom `Ajax/SerachList.ss`.
+
+## Inline Search
+This module includes an inline search. The listing within the inline search will display up to ten search results and a "See more..." item which navigates to the search page which will display all search results in a list.
 
 ## Enable Search on DataObjects
 TODO
