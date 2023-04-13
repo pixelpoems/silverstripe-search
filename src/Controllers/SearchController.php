@@ -49,6 +49,8 @@ class SearchController extends Controller
     private function getData($data): ArrayList
     {
         $list = ArrayList::create();
+        if(!$data) return $list;
+
         foreach ($data as $item) {
             if(isset($item->class)) {
                 $entity = DataObject::get($item->class)->byID($item->id);

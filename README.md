@@ -1,3 +1,5 @@
+## WORK IN PROGRESS
+
 # silverstripe-fuse-search
 This module provides a fuse.js based search using ajax and configurable indexing.
 You can use it in combination with Silverstripe [Elemental](https://github.com/silverstripe/silverstripe-elemental) and [Fluent](https://github.com/tractorcow-farm/silverstripe-fluent). For Elemental and Fluent configuration check the specified documentation below.
