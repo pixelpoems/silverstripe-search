@@ -20,9 +20,9 @@ class PopulateSearch extends BuildTask
 
     private static string $segment = "PopulateSearch";
 
-    // ToDo: exclude Elements
     private static array $exclude_elements = [];
 
+    // ToDo: Update JS Path based on given
     private static string $path = './_resources/search/';
 
     private static array $prevent_lang_from_index = []; // e.g. 'de_AT'
