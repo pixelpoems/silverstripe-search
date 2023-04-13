@@ -3,6 +3,9 @@ import {decodeHtmlSpecialChars, downloadUrl} from "./utils";
 let locale = document.querySelector('html').getAttribute('lang');
 locale = locale.replace('-', '_');
 
+let fuse = null;
+let isInlineSearch = false;
+
 document.addEventListener("DOMContentLoaded", async function (e) {
 
     const searchButton = document.querySelector('button#search-btn');
@@ -11,21 +14,36 @@ document.addEventListener("DOMContentLoaded", async function (e) {
     const searchInput = document.querySelector('input#search-pattern');
     if(!searchInput) return;
 
+    isInlineSearch = !!document.querySelector('#inline-search');
+
     const list = await fetchData(locale);
     if(!list) return;
 
-    const fuse = new Fuse(list, getOptions());
+    fuse = new Fuse(list, getOptions());
+
+    initURLSearch(searchInput);
 
     searchInput.addEventListener('keyup', () => {
-        handleSearch(fuse, list, searchInput.value)
+        handleSearch(searchInput.value);
     });
 
     searchButton.addEventListener('click', () => {
-        handleSearch(fuse, list, searchInput.value)
+        handleSearch(searchInput.value);
     });
 });
 
-function handleSearch(fuse, list, searchValue) {
+function initURLSearch(searchInput) {
+    let initSearch = window.location.search;
+    if(!initSearch) return;
+
+    let value = initSearch.split('=')[1];
+
+    handleSearch(value);
+    searchInput.value = value;
+}
+
+function handleSearch(searchValue) {
+
     let result = fuse.search(searchValue);
 
     let items = result.filter(item => {
@@ -34,8 +52,13 @@ function handleSearch(fuse, list, searchValue) {
         return item.item;
     });
 
-    let url = 'api/search/result'
-    if(locale) url += '?locale=' + locale;
+    let url = 'api/search/result?inline=' + isInlineSearch
+    if(locale) url += '&locale=' + locale;
+
+    // Max items to display on inline search 10
+    if(isInlineSearch) {
+        items = items.slice(0,10);
+    }
 
     downloadUrl(url, JSON.stringify(items),(response) => {
         let resultElement = document.getElementById('js-result-list');
@@ -47,6 +70,10 @@ function handleSearch(fuse, list, searchValue) {
         if(resultElement.classList.contains('hidden')) {
             resultElement.classList.remove('hidden');
         }
+
+        // Update Read More Link with search Value
+        let readMoreLink = document.querySelector('a#search-see-more');
+        if(readMoreLink) readMoreLink.search = `?value=${searchValue}`;
     })
 }
 

@@ -4,7 +4,9 @@ namespace Pixelpoems\FuseSearch\Controllers;
 
 use DNADesign\Elemental\Models\BaseElement;
 use Page;
+use Pixelpoems\FuseSearch\Pages\SearchPage;
 use SilverStripe\Control\Controller;
+use SilverStripe\Control\Director;
 use SilverStripe\Control\HTTPRequest;
 use SilverStripe\Control\HTTPResponse;
 use SilverStripe\Core\Convert;
@@ -43,7 +45,7 @@ class SearchController extends Controller
 
         $this->extend('updateList', $list);
 
-        return $this->generateResponse($locale, $list);
+        return $this->generateResponse($locale, $list, $request->getVar('inline'));
     }
 
     private function getData($data): ArrayList
@@ -60,9 +62,13 @@ class SearchController extends Controller
         return $list;
     }
 
-    private function generateResponse($locale, $list)
+    private function generateResponse($locale, $list, $isInline)
     {
-        $data = ['List' => $list];
+        $data = [
+            'List' => $list,
+            'IsInline' => $isInline === 'true',
+            'SearchPageLink' => Director::absoluteURL(SearchPage::find_link())
+        ];
 
         $this->extend('updateAjaxTemplateData', $data);
 

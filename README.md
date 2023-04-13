@@ -4,6 +4,15 @@
 This module provides a fuse.js based search using ajax and configurable indexing.
 You can use it in combination with Silverstripe [Elemental](https://github.com/silverstripe/silverstripe-elemental) and [Fluent](https://github.com/tractorcow-farm/silverstripe-fluent). For Elemental and Fluent configuration check the specified documentation below.
 
+* [Requirements](#requirements)
+* [Installation](#installation)
+* [Configuration](#configuration)
+* [Overwrite Template Files](#overwrite-template-files)
+* [Enable Search on DataObjects](#enable-search-on-dataobjects)
+* [Config to enable Elemental](#config-to-enable-elemental)
+* [Config to enable Fluent](#config-to-enable-fluent)
+
+
 ## Requirements
 * Silverstripe CMS ^4.0
 * Silverstripe Framework ^4.0
