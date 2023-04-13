@@ -60,18 +60,18 @@ class SearchController extends Controller
 
     private function generateResponse($locale, $list)
     {
+        $data = ['List' => $list];
+
+        $this->extend('updateAjaxTemplateData', $data);
+
         if($this->config()->get('enable_fluent')) {
-            return FluentState::singleton()->withState(function(FluentState $state) use ($locale, $list) {
+            return FluentState::singleton()->withState(function(FluentState $state) use ($locale, $data) {
                 $state->setLocale($locale);
 
-                return $this->customise([
-                    'List' => $list
-                ])->renderWith('Pixelpoems\\FuseSearch\\Ajax\\SearchList');
+                return $this->customise($data)->renderWith('Pixelpoems\\FuseSearch\\Ajax\\SearchList');
             });
         } else {
-            return $this->customise([
-                'List' => $list
-            ])->renderWith('Pixelpoems\\FuseSearch\\Ajax\\SearchList');
+            return $this->customise($data)->renderWith('Pixelpoems\\FuseSearch\\Ajax\\SearchList');
         }
     }
 }

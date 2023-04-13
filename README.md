@@ -47,6 +47,16 @@ ATTENTION: If you overwrite the templates, make sure that the required js files 
 <input type="hidden" id="search-index-keys" value="$SearchKeys" />
 ```
 
+If you need additional Variables within your Ajax SearchList Result Template `Pixelpoems/FuseSearch/Ajax/SearchList.ss` you can extend the `Pixelpoems\FuseSearch\Controllers\SearchController` and update the data with the following hook:
+```php
+public function updateAjaxTemplateData(&$data) {
+    $additionalList = ArrayList::create();
+    $data['AdditionalBool'] = true;
+    $data['AdditionalList'] = $additionalList
+}
+```
+All the Variables, that are added here can be accessed in your custom `Ajax/SerachList.ss`.
+
 ## Enable Search on DataObjects
 TODO
 
