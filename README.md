@@ -93,7 +93,7 @@ And add the `SearchIndexExtension` to the Base Element Model:
 ```yml
 DNADesign\Elemental\Models\BaseElement:
   extensions:
-    - Pixelpoems\FuseSearch\Extensions\SearchIndexExtension`
+    - Pixelpoems\FuseSearch\Extensions\SearchIndexExtension
 ```
 After adding the extension you can use the `updateSearchIndexData` hook to specify your index data.
 
