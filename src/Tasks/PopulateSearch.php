@@ -14,9 +14,9 @@ use TractorCow\Fluent\State\FluentState;
 
 class PopulateSearch extends BuildTask
 {
-    protected $title = 'Populate Search';
+    protected string $title = 'Populate Search';
 
-    protected $description = 'Crate, Re-Create and prepare the silverstripe fuse search index at each run.';
+    protected string $description = 'Crate, Re-Create and prepare the silverstripe fuse search index at each run.';
 
     private static string $segment = "fuse-search-populate";
 
