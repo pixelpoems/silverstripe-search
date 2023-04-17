@@ -36,7 +36,7 @@ Following variables can be used to configure your search index:
 ```yml
 Pixelpoems\FuseSearch\Tasks\PopulateSearch:
   path: './_resources/search/' # Default Path to save the index file
-  keys: # Default keys witch will be populated within the json index file
+  index_keys: # Default keys witch will be populated within the json index file
     - title # Title will be added by default if nothing else is defined
 ```
 By default, your index file is named `index.json` and will be placed at `/public/_resources/search/`
