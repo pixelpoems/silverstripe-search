@@ -20,9 +20,14 @@ class SearchIndexExtension extends DataExtension
         $data['title'] = $this->owner->Title;
 
         $this->owner->extend('updateSearchIndexData',$data);
+        $data = $this->addSearchData($data);
 
         $data['id'] = $this->owner->ID;
         $data['class'] = $this->owner->ClassName;
+        return $data;
+    }
+
+    public function addSearchData($data) {
         return $data;
     }
 }

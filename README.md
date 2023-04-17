@@ -38,6 +38,7 @@ Pixelpoems\FuseSearch\Tasks\PopulateSearch:
   path: './_resources/search/' # Default Path to save the index file
   index_keys: # Default keys witch will be populated within the json index file
     - title # Title will be added by default if nothing else is defined
+    - content # Additional index key
 ```
 By default, your index file is named `index.json` and will be placed at `/public/_resources/search/`
 
@@ -45,6 +46,16 @@ To Update or set the index keys based on the Class you can extend the Class and 
 ```php
 public function updateSearchIndexData(array &$data) {
     $data['content'] = $this->owner->Content;
+}
+```
+To update the data without extension e.g. on a new PageType you can add the following function to your new Page Type with your custom list, which should be indexed:
+```php
+public function addSearchData($data) {
+
+    $content = json_encode(implode(' ', $this->getList()->map()->values()));
+    $data['content'] = str_replace('"', '', $content);
+
+    return $data;
 }
 ```
 
