@@ -33,11 +33,13 @@ document.addEventListener("DOMContentLoaded", async function (e) {
 });
 
 function initURLSearch(searchInput) {
-    let initSearch = window.location.search;
-    if(!initSearch) return;
+    const queryString = window.location.search;
+    if(!queryString) return;
 
-    let value = initSearch.split('=')[1];
+    const urlParams = new URLSearchParams(queryString);
+    let value = urlParams.get('value');
 
+    if(!value) return;
     handleSearch(value);
     searchInput.value = value;
 }
