@@ -18,7 +18,7 @@ class PopulateSearch extends BuildTask
 
     protected $description = 'Crate, Re-Create and prepare the silverstripe fuse search index at each run.';
 
-    private static string $segment = "PopulateSearch";
+    private static string $segment = "fuse-search-populate";
 
     private static array $exclude_elements = [];
 
