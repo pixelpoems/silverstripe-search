@@ -16,12 +16,7 @@ document.addEventListener("DOMContentLoaded", async function (e) {
 
     isInlineSearch = !!document.querySelector('#inline-search');
 
-    const list = await fetchData(locale);
-    if(!list) return;
-
-    fuse = new Fuse(list, getOptions());
-
-    initURLSearch(searchInput);
+    await initURLSearch(searchInput);
 
     searchInput.addEventListener('keyup', () => {
         handleSearch(searchInput.value);
@@ -32,7 +27,14 @@ document.addEventListener("DOMContentLoaded", async function (e) {
     });
 });
 
-function initURLSearch(searchInput) {
+async function initFuse() {
+    const list = await fetchData(locale);
+    if (!list) return;
+
+    fuse = new Fuse(list, getOptions());
+}
+
+async function initURLSearch(searchInput) {
     const queryString = window.location.search;
     if(!queryString) return;
 
@@ -40,11 +42,12 @@ function initURLSearch(searchInput) {
     let value = urlParams.get('value');
 
     if(!value) return;
-    handleSearch(value);
+    await handleSearch(value);
     searchInput.value = value;
 }
 
-function handleSearch(searchValue) {
+async function handleSearch(searchValue) {
+    if(!fuse) await initFuse();
 
     let result = fuse.search(searchValue);
 
