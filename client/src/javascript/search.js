@@ -6,24 +6,19 @@ locale = locale.replace('-', '_');
 let fuse = null;
 let failedToDataFetch = false;
 let isInlineSearch = false;
+let loader = null;
 
 document.addEventListener("DOMContentLoaded", async function (e) {
-
-    const searchButton = document.querySelector('button#search-btn');
-    if(!searchButton) return;
 
     const searchInput = document.querySelector('input#search-pattern');
     if(!searchInput) return;
 
     isInlineSearch = !!document.querySelector('#inline-search');
+    loader = document.querySelector('.search-loader');
 
     await initURLSearch(searchInput);
 
     searchInput.addEventListener('keyup', async () => {
-        await handleSearch(searchInput.value);
-    });
-
-    searchButton.addEventListener('click', async () => {
         await handleSearch(searchInput.value);
     });
 });
@@ -51,6 +46,7 @@ async function handleSearch(searchValue) {
     if(!fuse) await initFuse();
     if(!fuse) return;
 
+    if(loader) loader.classList.remove('hidden');
     let result = fuse.search(searchValue);
 
     let items = result.filter(item => {
@@ -81,6 +77,8 @@ async function handleSearch(searchValue) {
         // Update Read More Link with search Value
         let readMoreLink = document.querySelector('a#search-see-more');
         if(readMoreLink) readMoreLink.search = `?value=${searchValue}`;
+
+        if(loader) loader.classList.add('hidden');
     })
 }
 

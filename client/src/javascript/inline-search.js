@@ -4,17 +4,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
     openBtn.addEventListener('click', (e) => {
         let search = document.querySelector('#inline-search');
-        if(!search) return;
+        let searchInput = document.querySelector('#search-pattern');
+        if(!search || !searchInput) return;
 
         search.classList.remove('hidden');
         openBtn.style.display = 'none';
-        document.querySelector('#search-pattern').focus();
+        searchInput.focus();
 
         let closeBtn = search.querySelector('#close-inline-search-btn');
         if(closeBtn) {
             closeBtn.addEventListener('click', () => {
                 search.classList.add('hidden');
                 openBtn.style.display = 'inline-block';
+                searchInput.value = '';
             })
         }
     });

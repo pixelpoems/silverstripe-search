@@ -1,3 +1,5 @@
+export const loadingSpinnerHTML = '<div class="loader"></div>';
+
 export function downloadUrl(url, body, callback) {
     let request = window.ActiveXObject ? new ActiveXObject('Microsoft.XMLHTTP') : new XMLHttpRequest;
 

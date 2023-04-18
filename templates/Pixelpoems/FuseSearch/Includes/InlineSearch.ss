@@ -5,8 +5,13 @@
 
     <li>
         <div id="inline-search" class="search-bar hidden">
-            <input id="search-pattern">
-            <button id="search-btn">Search</button>
+            <div  class="search-input-container">
+                <input id="search-pattern" type="text" placeholder="Search"/>
+                <div class="search-loader hidden">
+                    <i class="loader"></i>
+                </div>
+            </div>
+
             <button id="close-inline-search-btn">Close</button>
 
             <div id="js-result-list" class="inline-search hidden"></div>
