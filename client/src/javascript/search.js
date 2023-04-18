@@ -121,6 +121,8 @@ async function fetchData(filename, failCount = 0) {
                 if(locale !== 'index' && failCount < 1) {
                     failCount ++;
                     return await fetchData('index', failCount);
+                } else {
+                    console.error('No search index found!')
                 }
             }
             return null;
