@@ -4,6 +4,7 @@ let locale = document.querySelector('html').getAttribute('lang');
 locale = locale.replace('-', '_');
 
 let fuse = null;
+let failedToDataFetch = false;
 let isInlineSearch = false;
 
 document.addEventListener("DOMContentLoaded", async function (e) {
@@ -18,12 +19,12 @@ document.addEventListener("DOMContentLoaded", async function (e) {
 
     await initURLSearch(searchInput);
 
-    searchInput.addEventListener('keyup', () => {
-        handleSearch(searchInput.value);
+    searchInput.addEventListener('keyup', async () => {
+        await handleSearch(searchInput.value);
     });
 
-    searchButton.addEventListener('click', () => {
-        handleSearch(searchInput.value);
+    searchButton.addEventListener('click', async () => {
+        await handleSearch(searchInput.value);
     });
 });
 
@@ -31,7 +32,7 @@ async function initFuse() {
     const list = await fetchData(locale);
     if (!list) return;
 
-    fuse = new Fuse(list, getOptions());
+    fuse = new Fuse(await list, getOptions());
 }
 
 async function initURLSearch(searchInput) {
@@ -48,6 +49,7 @@ async function initURLSearch(searchInput) {
 
 async function handleSearch(searchValue) {
     if(!fuse) await initFuse();
+    if(!fuse) return;
 
     let result = fuse.search(searchValue);
 
@@ -110,21 +112,26 @@ function getOptions() {
     };
 }
 
-async function fetchData(filename, failCount = 0) {
+async function fetchData(filename) {
+    if(failedToDataFetch) return null;
     const path = './_resources/search/' + filename + '.json';
+    const shouldRetryOnFail = filename !== 'index' && !failedToDataFetch;
 
-    return await fetch(path)
-        .then(async (res) => {
+    return await fetch(path, { cache: "force-cache" }).then(async (res) => {
             if (res.ok) {
                 return await res.json();
             } else if (res.status === 404) {
-                if(locale !== 'index' && failCount < 1) {
-                    failCount ++;
-                    return await fetchData('index', failCount);
-                } else {
-                    console.error('No search index found!')
-                }
+                return await handleFetchError(shouldRetryOnFail);
             }
-            return null;
+        }).catch(async () => {
+            return await handleFetchError(shouldRetryOnFail);
         });
+}
+
+async function handleFetchError(retry = false) {
+    if(retry) return await fetchData('index');
+
+    failedToDataFetch = true;
+    console.error('No search index found!');
+    return null;
 }
