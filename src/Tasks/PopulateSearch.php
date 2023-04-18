@@ -22,8 +22,7 @@ class PopulateSearch extends BuildTask
 
     private static array $exclude_elements = [];
 
-    // ToDo: Update JS Path based on given
-    private static string $path = './_resources/search/';
+    private static string $path = '/_resources/search/';
 
     private static array $prevent_lang_from_index = []; // e.g. 'de_AT'
 
@@ -85,7 +84,7 @@ class PopulateSearch extends BuildTask
         }
 
         if(!$fileName) $fileName = 'index.json';
-        $fileName = $this->config()->get('path') . $fileName;
+        $fileName = $this->getPath() . $fileName;
         $this->log('Data Entities: ' . count($data));
         $this->writeSearchFile($data, $fileName, $locale);
     }
@@ -113,8 +112,8 @@ class PopulateSearch extends BuildTask
     private function writeSearchFile($data, string $fileName, string $locale = null)
     {
         // Check if folder exists
-        if(!is_dir($this->config()->get('path'))) {
-            mkdir($this->config()->get('path'), 0755, true);
+        if(!is_dir($this->getPath())) {
+            mkdir($this->getPath(), 0755, true);
         }
 
         // Check if file exists and clean content
@@ -128,5 +127,11 @@ class PopulateSearch extends BuildTask
         else $this->log('SUCCESS');
 
         $this->log($fileName . '<br /><hr />');
+    }
+
+    private function getPath(): string
+    {
+        $path = $this->config()->get('path');
+        return PUBLIC_PATH . $path;
     }
 }
