@@ -107,15 +107,18 @@ function getOptions() {
     };
 }
 
-async function fetchData(filename) {
+async function fetchData(filename, failCount = 0) {
     const path = './_resources/search/' + filename + '.json';
 
     return await fetch(path)
         .then(async (res) => {
             if (res.ok) {
                 return await res.json();
-            } else if (res.status === 404 && locale !== 'index') {
-                return await fetchData('index')
+            } else if (res.status === 404) {
+                if(locale !== 'index' && failCount < 1) {
+                    failCount ++;
+                    return await fetchData('index', failCount);
+                }
             }
             return null;
         });
