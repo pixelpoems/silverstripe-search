@@ -50,7 +50,7 @@ async function handleSearch(searchValue) {
     let result = fuse.search(searchValue);
 
     let items = result.filter(item => {
-        return item.score < 0.3;
+        return item.score < 0.5;
     }).map((item) => {
         return item.item;
     });
@@ -96,7 +96,7 @@ function getOptions() {
         isCaseSensitive: false,
         includeScore: true,
         shouldSort: true,
-        // includeMatches: false,
+        includeMatches: true,
         // findAllMatches: false,
         minMatchCharLength: 2,
         // location: 0,

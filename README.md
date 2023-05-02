@@ -42,18 +42,46 @@ Pixelpoems\FuseSearch\Tasks\PopulateSearch:
 ```
 By default, your index file is named `index.json` and will be placed at `/public/_resources/search/`
 
-To Update or set the index keys based on the Class you can extend the Class and use the following method to set the values. If you set extra values here, they won't get noticed by the js logic. Only the predefined keys will be recognised. `$data`will contain all preconfigued keys.
+To Update or set the index keys based on the Class  you can add the following function to your new Page Type with your custom list, which should be indexed. If you set extra values here, they won't get noticed by the js logic. Only the predefined keys will be recognised. `$data`will contain all preconfigued keys.
 ```php
-public function updateSearchIndexData(array &$data) {
-    $data['content'] = $this->owner->Content;
+public function getList(): DataList
+{
+    return DataObject::get();
+}
+
+public function addSearchData($data)
+{
+    $tags[] = $this->getList()->map()->values();
+
+    // Make sure other tags do not get overwritten by this function
+    if($data['tags']) $data['tags'] = array_merge($data['tags'], $tags);
+    else $data['tags'] = $tags;
+
+    return $data;
 }
 ```
-To update the data without extension e.g. on a new PageType you can add the following function to your new Page Type with your custom list, which should be indexed:
-```php
-public function addSearchData($data) {
 
-    $content = json_encode(implode(' ', $this->getList()->map()->values()));
-    $data['content'] = str_replace('"', '', $content);
+To add multiple values e.g. Tags or something similar you can do like this:
+```php
+public function addSearchData($data)
+{
+    $tags = [];
+
+    // Add Name of an HasOne relation
+    if($this->HasOneID) {
+        $tags[] = $this->HasOne()->Name;
+    }
+
+    // Add Names of an HasMany relations
+    if($this->HasMany()->exists()) {
+        foreach ($this->HasMany() as $item) {
+            $tags[] = $item->Name;
+        }
+    }
+
+    // Make sure other tags do not get overwritten by this function
+    if($data['tags']) $data['tags'] = array_merge($data['tags'], $tags);
+    else $data['tags'] = $tags;
 
     return $data;
 }
@@ -72,7 +100,8 @@ ATTENTION: If you overwrite the templates, make sure that the required js files 
 
 If you need additional Variables within your Ajax SearchList Result Template `Pixelpoems/FuseSearch/Ajax/SearchList.ss` you can extend the `Pixelpoems\FuseSearch\Controllers\SearchController` and update the data with the following hook:
 ```php
-public function updateAjaxTemplateData(&$data) {
+public function updateAjaxTemplateData(&$data)
+{
     $additionalList = ArrayList::create();
     $data['AdditionalBool'] = true;
     $data['AdditionalList'] = $additionalList

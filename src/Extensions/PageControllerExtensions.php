@@ -7,7 +7,7 @@ use SilverStripe\ORM\DataExtension;
 
 class PageControllerExtensions extends DataExtension
 {
-    public function getSearchKeys()
+    public function getSearchKeys(): string
     {
         return SearchService::getSearchKeysForTemplate();
     }

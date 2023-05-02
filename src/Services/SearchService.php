@@ -12,7 +12,8 @@ class SearchService
     static function getSearchKeysForTemplate(): string
     {
         $keys = Config::inst()->get(PopulateSearch::class, 'index_keys');
-        $keys = json_encode($keys);
+        $keys = array_unique($keys);
+        $keys = json_encode(array_values($keys));
         return htmlspecialchars($keys);
     }
 }
