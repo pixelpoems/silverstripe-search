@@ -47,7 +47,9 @@ async function handleSearch(searchValue) {
     if(!fuse) return;
 
     if(loader) loader.classList.remove('hidden');
-    let result = fuse.search(searchValue);
+    // https://fusejs.io/examples.html#extended-search
+    // Search with "include-match"
+    let result = fuse.search("'" + searchValue);
 
     let items = result.filter(item => {
         return item.score < 0.5;
@@ -96,13 +98,13 @@ function getOptions() {
         isCaseSensitive: false,
         includeScore: true,
         shouldSort: true,
-        includeMatches: true,
-        // findAllMatches: false,
+        // includeMatches: true,
+        // findAllMatches: true,
         minMatchCharLength: 2,
         // location: 0,
         threshold: 0.5,
         // distance: 100,
-        // useExtendedSearch: false,
+        useExtendedSearch: true, // https://fusejs.io/examples.html#extended-search
         // ignoreLocation: false,
         // ignoreFieldNorm: false,
         // fieldNormWeight: 1,
