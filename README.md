@@ -30,23 +30,26 @@ This module includes
 * `Inline Search` - Template Include
 
 ## Configuration
-Without any special configurations all pages will be indexed, which have the "Show in Search" Checkbox checked. For indexing you have to run the `PopulateSearch` Task.
+Without any special configurations all pages and subclasses of page, which have the "Show in Search" Checkbox checked, will be indexed. For indexing you have to run the `PopulateSearch` Task (More Details: [Populate Task](#populate-task)).
 
 Following variables can be used to configure your search index:
 ```yml
 Pixelpoems\Search\Tasks\PopulateSearch:
-  path: './_resources/search/' # Default Path to save the index file
   index_keys: # Default keys witch will be populated within the json index file
     - title # Title will be added by default if nothing else is defined
     - content # Additional index key
 ```
-By default, your index file is named `index.json` and will be placed at `/public/_resources/search/`
+By default, your index file is named `index.json` and will be placed at `/search/` within your project root directory.
+Add `/search` to your `.gitignore` to prevent index files from being pushed to your git repository.
 
 To Update or set the index keys based on the Class you can extend the Class and use the following method to set the values. If you set extra values here, they won't get noticed by the js logic. Only the predefined keys will be recognised. `$data`will contain all preconfigued keys.
 ```php
 public function updateSearchIndexData(array &$data)
 {
     $data['content'] = $this->owner->Content;
+
+    # Make sure to escape html tags e.g. with:
+    $data['content'] = preg_replace('#<[^>]+>#', ' ', $this->owner->Content);
 }
 ```
 
@@ -95,18 +98,25 @@ public function addSearchData($data)
 }
 ```
 
+## Populate Task
+To create or update the search index use the "Search Populate" Task:
+
+```/dev/tasks/search-populate```
+
+```shell
+php vendor/silverstripe/framework/cli-script.php dev/tasks/search-populate
+```
+This Task will create based on your configuration an `index.json` and an `index-elemental.json` (if elemental is enabled) or
+
 ## Overwrite Template Files
 To overwrite the default search templates you can create a `Pixelpoems/Search` folder within your project templates.
 * `Pixelpoems/Search/Ajax/SearchList.ss` for the rendered Search result.
 * `Pixelpoems/Search/Includes/InlineSearch.ss` for inline Search output.
 * `Pixelpoems/Search/Pages/Layout/SearchPage.ss` for your custom Search Page.
 
-ATTENTION: If you overwrite the templates, make sure that the required js files are included within the templates or will be included via a Controller. Also make sure that the following input is included if you have custom index keys defined in your `PopulateSearch` Task:
-```html
-<input type="hidden" id="search-index-keys" value="$SearchKeys" />
-```
+_ATTENTION: If you overwrite the templates, make sure that the required js files are included within the templates or will be included via a Controller!_
 
-If you need additional Variables within your Ajax SearchList Result Template `Pixelpoems/Search/Ajax/SearchList.ss` you can extend the `Pixelpoems\Search\Controllers\SearchController` and update the data with the following hook:
+If you need additional Variables within your Ajax SearchList Result Template `Pixelpoems/Search/Ajax/SearchList.ss` you can extend the `Pixelpoems/Search/Controllers/SearchController` and update the data with the following hook:
 ```php
 public function updateAjaxTemplateData(&$data)
 {
@@ -121,7 +131,23 @@ All the Variables, that are added here can be accessed in your custom `Ajax/Sera
 This module includes an inline search. The listing within the inline search will display up to ten search results and a "See more..." item which navigates to the search page which will display all search results in a list.
 
 ## Enable Search on DataObjects
-TODO
+If you want to add data of DataObject you can add text link described in the [Configuration](#configuration) section. Here you can add e.g. the title and content within the index of a single page along to all other objects.
+
+```php
+public function addSearchData($data)
+{
+    $data = [];
+
+    foreach (DataObject::get() as $dataObject) {
+        $data[] = $dataObject->Title . ' ' $dataObject->Content;
+    }
+
+    $data['dataObjects'] = explode(' ', $data);
+
+
+    return $data;
+}
+```
 
 ## Config to enable Elemental
 To enable indexing elemental add the following to your configuration yml:

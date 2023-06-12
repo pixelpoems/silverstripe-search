@@ -33,51 +33,52 @@ class SearchService
 
         foreach (Config::inst()->get(PopulateSearch::class, 'index_keys') as $key) {
             foreach ($src as $item) {
+                if(!isset($item->class)) return;
                 if (preg_match("/" . $this->value . "/i", $item->$key)) {
-                    if (isset($item->class)) {
-                        $entity = DataObject::get($item->class)->byID($item->id);
-                        if ($entity && !array_keys($list->map()->keys(), $entity->ID) && $entity->canView()) $list->push($entity);
+                    $entity = DataObject::get($item->class)->byID($item->id);
 
+                    // Check if Entity exists and current member can view it
+                    if ($entity && $entity->canView()) {
+
+                        // Check if Entity does not already exist in list
+                        if(!array_keys($list->map()->keys(), $entity->ID)) {
+                            $list->push($entity);
+                        }
                     }
                 }
             }
         };
 
-
-//        $list->columnUnique('title');
-
         if($this->isInline) return $list->limit(10);
         return $list;
-
-
     }
 
     private function getSearchIndex()
     {
+        $name = 'index';
+
         if(Config::inst()->get(SearchController::class, 'enable_fluent')) {
-            $fileName = self::getIndexFile($this->locale);
-
-            // Check if file exists
-            if(!file_exists($fileName)) {
-                return;
-            }
-
-
-            $index = file_get_contents($fileName, '');
-            $data = json_decode($index);
-
-
-            if(file_exists(self::getIndexFile($this->locale . '-elemental'))) {
-                $indexElemental = file_get_contents(self::getIndexFile($this->locale . '-elemental'), '');
-                $data = array_merge($data, json_decode($indexElemental));
-            }
-
-            return $data;
-
-        } else {
-            // GET index.json
-            // GET index-elemntal.json
+            // Change name to locale if fluent is enabled
+            $name = $this->locale;
         }
+
+        $fileName = self::getIndexFile($name);
+
+        // Check if file exists
+        if(!file_exists($fileName)) {
+            return;
+        }
+
+        $index = file_get_contents($fileName, '');
+        $data = json_decode($index);
+
+        // Check if elemental index file exists
+        if(file_exists(self::getIndexFile($name . '-elemental'))) {
+            $indexElemental = file_get_contents(self::getIndexFile($this->locale . '-elemental'), '');
+            $data = array_merge($data, json_decode($indexElemental));
+        }
+
+        return $data;
     }
 
     public static function getIndexPath(): string
