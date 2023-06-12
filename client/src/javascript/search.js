@@ -43,6 +43,17 @@ async function initURLSearch(searchInput) {
 }
 
 async function handleSearch(searchValue) {
+    if(searchValue.length < 2) {
+        let resultElement = document.getElementById('js-result-list');
+        if(!resultElement) return;
+
+        resultElement.textContent = '';
+        resultElement.innerHTML = '';
+
+        resultElement.classList.add('hidden');
+        return;
+    }
+
     if(!fuse) await initFuse();
     if(!fuse) return;
 
