@@ -1,10 +1,11 @@
 <?php
 
-namespace Pixelpoems\FuseSearch\Controllers;
+namespace Pixelpoems\Search\Controllers;
 
 use DNADesign\Elemental\Models\BaseElement;
 use Page;
-use Pixelpoems\FuseSearch\Pages\SearchPage;
+use Pixelpoems\Search\Pages\SearchPage;
+use Pixelpoems\Search\Services\SearchService;
 use SilverStripe\Control\Controller;
 use SilverStripe\Control\Director;
 use SilverStripe\Control\HTTPRequest;
@@ -31,42 +32,34 @@ class SearchController extends Controller
             $locale = str_replace('-', '_', $requestHTMLLocale);
         } else $locale = null;
 
-        $data = json_decode($request->getBody());
+        $value = Convert::raw2sql($request->getVar('value'));
+        $isInline = (bool)Convert::raw2sql($request->getVar('inline'));
 
         if($this->config()->get('enable_fluent') && $locale) {
-            $list = FluentState::singleton()->withState(function (FluentState $state) use ($locale, $data) {
+            $list = FluentState::singleton()->withState(function (FluentState $state) use ($locale, $value, $isInline) {
                 $state->setLocale($locale);
 
-                return $this->getData($data);
+                $search = SearchService::create($value, $locale, $isInline);
+                return $search->getSearchResult();
             });
+
         } else {
-            $list = $this->getData($data);
+
+            $search = SearchService::create($value, $locale, $isInline);
+            $list = $search->getSearchResult();
         }
 
         $this->extend('updateList', $list);
 
-        return $this->generateResponse($locale, $list, $request->getVar('inline'));
+        return $this->generateResponse($locale, $list, $isInline);
     }
 
-    private function getData($data): ArrayList
-    {
-        $list = ArrayList::create();
-        if(!$data) return $list;
 
-        foreach ($data as $item) {
-            if(isset($item->class)) {
-                $entity = DataObject::get($item->class)->byID($item->id);
-                if($entity) $list->push($entity);
-            }
-        }
-        return $list;
-    }
-
-    private function generateResponse($locale, $list, $isInline)
+    private function generateResponse($locale, $list, $isInline = false)
     {
         $data = [
             'List' => $list,
-            'IsInline' => $isInline === 'true',
+            'IsInline' => $isInline,
             'SearchPageLink' => Director::absoluteURL(SearchPage::find_link())
         ];
 
@@ -76,10 +69,10 @@ class SearchController extends Controller
             return FluentState::singleton()->withState(function(FluentState $state) use ($locale, $data) {
                 $state->setLocale($locale);
 
-                return $this->customise($data)->renderWith('Pixelpoems\\FuseSearch\\Ajax\\SearchList');
+                return $this->customise($data)->renderWith('Pixelpoems\\Search\\Ajax\\SearchList');
             });
         } else {
-            return $this->customise($data)->renderWith('Pixelpoems\\FuseSearch\\Ajax\\SearchList');
+            return $this->customise($data)->renderWith('Pixelpoems\\Search\\Ajax\\SearchList');
         }
     }
 }

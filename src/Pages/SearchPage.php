@@ -1,13 +1,13 @@
 <?php
 
-namespace Pixelpoems\FuseSearch\Pages;
+namespace Pixelpoems\Search\Pages;
 
-use Pixelpoems\FuseSearch\Controllers\SearchPageController;
+use Pixelpoems\Search\Controllers\SearchPageController;
 use SilverStripe\ORM\DataObject;
 
 class SearchPage extends \Page
 {
-    private static string $table_name = 'FuseSearch_SearchPage';
+    private static string $table_name = 'Search_SearchPage';
 
     private static string $singular_name = 'Search Page';
 

@@ -1,9 +1,10 @@
 <?php
-namespace Pixelpoems\FuseSearch\Tasks;
+namespace Pixelpoems\Search\Tasks;
 
 use DNADesign\Elemental\Models\BaseElement;
 use Page;
-use Pixelpoems\FuseSearch\Controllers\SearchController;
+use Pixelpoems\Search\Controllers\SearchController;
+use Pixelpoems\Search\Services\SearchService;
 use SilverStripe\Core\ClassInfo;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Dev\BuildTask;
@@ -16,13 +17,11 @@ class PopulateSearch extends BuildTask
 {
     protected $title = '[SEARCH] Populate';
 
-    protected $description = 'Crate, Re-Create and prepare the silverstripe fuse search index at each run.';
+    protected $description = 'Crate, Re-Create and prepare the silverstripe search index at each run.';
 
-    private static string $segment = "fuse-search-populate";
+    private static string $segment = "search-populate";
 
     private static array $exclude_elements = [];
-
-    private static string $path = '/_resources/search/';
 
     private static array $prevent_lang_from_index = []; // e.g. 'de_AT'
 
@@ -38,13 +37,17 @@ class PopulateSearch extends BuildTask
         $config = Config::inst()->get(SearchController::class);
 
         if($config['enable_fluent']) {
-            $this->log('Fluent is enabled.<br /><hr />');
+            $this->log("##########################################");
+            $this->log("Fluent is enabled.");
+            $this->log("##########################################\n");
 
             $prevent_lang_from_index = $this->config()->get('prevent_lang_from_index');
 
             if($prevent_lang_from_index) {
                 $locales = Locale::get()->exclude(['Locale' => $prevent_lang_from_index]);
-                $this->log('There are some languages prevented from indexing: ' . implode(', ', $prevent_lang_from_index) . '<br /><hr />');
+                $this->log("There are some languages prevented from indexing: \n" . implode(', ', $prevent_lang_from_index));
+                $this->log("##########################################\n");
+
             } else {
                 $locales = Locale::get();
             }
@@ -52,41 +55,72 @@ class PopulateSearch extends BuildTask
             foreach ($locales as $locale) {
                 FluentState::singleton()->withState(function(FluentState $state) use ($locale, $config) {
                     $state->setLocale($locale->Locale);
-                    $locale = str_replace('-', '_', $locale->Locale);
-                    $this->populate($config, $locale . '.json', $locale);
+                    $this->populate($config, $locale->Locale, $locale->Locale);
                 });
             }
         } else {
             $this->populate($config);
+
         }
         $this->log('Successfully written search index!');
     }
 
     private function populate($config, string $fileName = null, string $locale = null)
     {
-        $data = $this->getData(Page::class);
+        if($locale) $this->log('START POPULATING: ' . $locale . "\n");
+        else $this->log("START POPULATING\n");
+
+        $this->populatePageData($config, $fileName, $locale);
 
         if($config['enable_elemental']) {
-            $exclude_elements = (array) $this->config()->get('exclude_elements');
-            $availableElementClasses = ClassInfo::subclassesFor(BaseElement::class);
+            $fileName = $this->populateElementData($config, $fileName, $locale);
+        }
 
-            foreach ($availableElementClasses as $class) {
-                if($class !== BaseElement::class) {
-                    /** @var BaseElement $inst */
-                    $inst = singleton($class);
+        if($locale) $this->log($locale . ': SUCCESS' . "\n");
+        else $this->log('SUCCESS' . "\n");
 
-                    if (!in_array($class, $exclude_elements ?? []) && $inst->canCreate()) {
-                        $elements = $this->getData($class);
-                        $data = array_merge($data, $elements);
-                    }
+        $this->log("##########################################\n");
+    }
+
+    private function populatePageData($config, string $fileName = null, string $locale = null)
+    {
+        $data = $this->getData(Page::class);
+
+        if(!$fileName) $fileName = SearchService::getIndexFile('index');
+        $fileName = SearchService::getIndexFile($fileName);
+        $this->log('Data Entities (Pages): ' . count($data));
+        $this->writeSearchFile($data, $fileName, $locale);
+
+        $this->log($fileName . "\n");
+    }
+
+    private function populateElementData($config, string $fileName = null, string $locale = null)
+    {
+        $this->log('ELEMENTS:');
+
+        $data = [];
+        $exclude_elements = (array)$this->config()->get('exclude_elements');
+        $availableElementClasses = ClassInfo::subclassesFor(BaseElement::class);
+
+        foreach ($availableElementClasses as $class) {
+            if($class !== BaseElement::class) {
+                /** @var BaseElement $inst */
+                $inst = singleton($class);
+
+                if (!in_array($class, $exclude_elements ?? [])) {
+                    $this->log($class);
+                    $data = array_merge($data, $this->getData($class));
                 }
             }
         }
 
-        if(!$fileName) $fileName = 'index.json';
-        $fileName = $this->getPath() . $fileName;
-        $this->log('Data Entities: ' . count($data));
+        if(!$fileName) $fileName = SearchService::getIndexFile('index-elmental');
+        $fileName = SearchService::getIndexFile($fileName . '-elmental');
+        $this->log('Data Entities (Elements): ' . count($data));
         $this->writeSearchFile($data, $fileName, $locale);
+
+        $this->log($fileName . "\n");
+
     }
 
     private function getData($class): array
@@ -106,14 +140,14 @@ class PopulateSearch extends BuildTask
     }
 
     private function log($msg) {
-        echo $msg . '<br />';
+        echo $msg . "\n";
     }
 
     private function writeSearchFile($data, string $fileName, string $locale = null)
     {
         // Check if folder exists
-        if(!is_dir($this->getPath())) {
-            mkdir($this->getPath(), 0755, true);
+        if(!is_dir(SearchService::getIndexPath())) {
+            mkdir(SearchService::getIndexPath(), 0777, true);
         }
 
         // Check if file exists and clean content
@@ -123,15 +157,6 @@ class PopulateSearch extends BuildTask
         fwrite($file, json_encode($data));
         fclose($file);
 
-        if($locale) $this->log('<b>' . $locale . '</b>: SUCCESS');
-        else $this->log('SUCCESS');
-
-        $this->log($fileName . '<br /><hr />');
-    }
-
-    private function getPath(): string
-    {
-        $path = $this->config()->get('path');
-        return PUBLIC_PATH . $path;
+        return $fileName;
     }
 }

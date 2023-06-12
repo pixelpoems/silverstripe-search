@@ -1,8 +1,8 @@
 <?php
 
-namespace Pixelpoems\FuseSearch\Extensions;
+namespace Pixelpoems\Search\Extensions;
 
-use Pixelpoems\FuseSearch\Services\SearchService;
+use Pixelpoems\Search\Services\SearchService;
 use SilverStripe\ORM\DataExtension;
 
 class PageControllerExtensions extends DataExtension

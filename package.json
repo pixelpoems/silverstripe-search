@@ -34,9 +34,7 @@
     "webpack-cli": "^4.10.0",
     "webpack-shell-plugin": "^0.5.0"
   },
-  "dependencies": {
-    "fuse.js": "^6.6.2"
-  },
+  "dependencies": {},
   "browser": {
     "fs": false,
     "path": false,

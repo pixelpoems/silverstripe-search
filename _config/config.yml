@@ -1,11 +1,11 @@
 ---
-Name: silverstripe-fuse-search
+Name: silverstripe-search
 ---
 
 Page:
   extensions:
-    - Pixelpoems\FuseSearch\Extensions\SearchIndexExtension
+    - Pixelpoems\Search\Extensions\SearchIndexExtension
 
 PageController:
   extensions:
-    - Pixelpoems\FuseSearch\Extensions\PageControllerExtensions
+    - Pixelpoems\Search\Extensions\PageControllerExtensions

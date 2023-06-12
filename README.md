@@ -1,7 +1,7 @@
-# Silverstripe Fuse Search Module
+# Silverstripe Search Module
 [![stability-beta](https://img.shields.io/badge/stability-beta-33bbff.svg)](https://github.com/mkenney/software-guides/blob/master/STABILITY-BADGES.md#beta)
 
-This module provides a fuse.js based search using ajax and configurable indexing.
+This module provides a silverstripe search using ajax and configurable indexing.
 You can use it in combination with Silverstripe [Elemental](https://github.com/silverstripe/silverstripe-elemental) and [Fluent](https://github.com/tractorcow-farm/silverstripe-fluent). For Elemental and Fluent configuration check the specified documentation below.
 
 * [Requirements](#requirements)
@@ -21,7 +21,7 @@ You can use it in combination with Silverstripe [Elemental](https://github.com/s
 
 ## Installation
 ```
-composer require pixelpoems/silverstripe-fuse-search
+composer require pixelpoems/silverstripe-search
 ```
 
 This module includes
@@ -34,7 +34,7 @@ Without any special configurations all pages will be indexed, which have the "Sh
 
 Following variables can be used to configure your search index:
 ```yml
-Pixelpoems\FuseSearch\Tasks\PopulateSearch:
+Pixelpoems\Search\Tasks\PopulateSearch:
   path: './_resources/search/' # Default Path to save the index file
   index_keys: # Default keys witch will be populated within the json index file
     - title # Title will be added by default if nothing else is defined
@@ -96,17 +96,17 @@ public function addSearchData($data)
 ```
 
 ## Overwrite Template Files
-To overwrite the default search templates you can create a `Pixelpoems/FuseSearch` folder within your project templates.
-* `Pixelpoems/FuseSearch/Ajax/SearchList.ss` for the rendered Search result.
-* `Pixelpoems/FuseSearch/Includes/InlineSearch.ss` for inline Search output.
-* `Pixelpoems/FuseSearch/Pages/Layout/SearchPage.ss` for your custom Search Page.
+To overwrite the default search templates you can create a `Pixelpoems/Search` folder within your project templates.
+* `Pixelpoems/Search/Ajax/SearchList.ss` for the rendered Search result.
+* `Pixelpoems/Search/Includes/InlineSearch.ss` for inline Search output.
+* `Pixelpoems/Search/Pages/Layout/SearchPage.ss` for your custom Search Page.
 
 ATTENTION: If you overwrite the templates, make sure that the required js files are included within the templates or will be included via a Controller. Also make sure that the following input is included if you have custom index keys defined in your `PopulateSearch` Task:
 ```html
 <input type="hidden" id="search-index-keys" value="$SearchKeys" />
 ```
 
-If you need additional Variables within your Ajax SearchList Result Template `Pixelpoems/FuseSearch/Ajax/SearchList.ss` you can extend the `Pixelpoems\FuseSearch\Controllers\SearchController` and update the data with the following hook:
+If you need additional Variables within your Ajax SearchList Result Template `Pixelpoems/Search/Ajax/SearchList.ss` you can extend the `Pixelpoems\Search\Controllers\SearchController` and update the data with the following hook:
 ```php
 public function updateAjaxTemplateData(&$data)
 {
@@ -126,13 +126,13 @@ TODO
 ## Config to enable Elemental
 To enable indexing elemental add the following to your configuration yml:
 ```yml
-Pixelpoems\FuseSearch\Controllers\SearchController:
+Pixelpoems\Search\Controllers\SearchController:
   enable_elemental: true
 ```
 
 Furthermore, you can use `exclude_elements` to prevent specific Element Classes from being indexed:
 ```yml
-Pixelpoems\FuseSearch\Controllers\SearchController:
+Pixelpoems\Search\Controllers\SearchController:
   exclude_elements:
     -  Namespace\Elements\Element
 ```
@@ -141,7 +141,7 @@ And add the `SearchIndexExtension` to the Base Element Model:
 ```yml
 DNADesign\Elemental\Models\BaseElement:
   extensions:
-    - Pixelpoems\FuseSearch\Extensions\SearchIndexExtension
+    - Pixelpoems\Search\Extensions\SearchIndexExtension
 ```
 After adding the extension you can use the `updateSearchIndexData` hook to specify your index data.
 
@@ -149,13 +149,13 @@ After adding the extension you can use the `updateSearchIndexData` hook to speci
 ## Config to enable Fluent
 To enable fluent within the index and search process add the following to your configuration yml:
 ```yml
-Pixelpoems\FuseSearch\Controllers\SearchController:
+Pixelpoems\Search\Controllers\SearchController:
   enable_fluent: true
 ```
 If you enabled fluent threw the config the `Populate Search Task` will create an index file for every locale. To prevent a locale from beeing indexed you can add the Locale title within the static variable `prevent_lang_from_index` like this:
 
 ```yml
-Pixelpoems\FuseSearch\Tasks\PopulateSearch:
+Pixelpoems\Search\Tasks\PopulateSearch:
   prevent_lang_from_index:
     - 'de_AT'
     - 'de_DE'
@@ -164,5 +164,5 @@ By default, your index files are named `{locale}.json`, e.g. `de_AT.json`.
 
 
 ## Reporting Issues
-Please [create an issue](https://github.com/pixelpoems/silverstripe-fuse-search/issues) for any bugs you've found, or features you're missing.
+Please [create an issue](https://github.com/pixelpoems/silverstripe-search/issues) for any bugs you've found, or features you're missing.
 

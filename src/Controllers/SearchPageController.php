@@ -1,6 +1,6 @@
 <?php
 
-namespace Pixelpoems\FuseSearch\Controllers;
+namespace Pixelpoems\Search\Controllers;
 
 use SilverStripe\View\Requirements;
 
@@ -8,8 +8,8 @@ class SearchPageController extends \PageController
 {
     protected function init()
     {
-        Requirements::javascript('pixelpoems/silverstripe-fuse-search:client/dist/javascript/search.min.js');
-        Requirements::css('pixelpoems/silverstripe-fuse-search:client/dist/css/search.min.css');
+        Requirements::javascript('pixelpoems/silverstripe-search:client/dist/javascript/search.min.js');
+        Requirements::css('pixelpoems/silverstripe-search:client/dist/css/search.min.css');
         parent::init();
     }
 }

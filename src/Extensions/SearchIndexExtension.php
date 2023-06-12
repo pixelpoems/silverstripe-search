@@ -1,8 +1,8 @@
 <?php
 
-namespace Pixelpoems\FuseSearch\Extensions;
+namespace Pixelpoems\Search\Extensions;
 
-use Pixelpoems\FuseSearch\Tasks\PopulateSearch;
+use Pixelpoems\Search\Tasks\PopulateSearch;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\ORM\DataExtension;
 

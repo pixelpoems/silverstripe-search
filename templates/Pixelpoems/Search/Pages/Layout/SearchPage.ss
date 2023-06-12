@@ -12,7 +12,4 @@
 
         <div id="js-result-list"></div>
     </div>
-
-    <input type="hidden" id="search-index-keys" value="$SearchKeys" />
-
 </article>

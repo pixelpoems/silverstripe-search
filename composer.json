@@ -1,7 +1,7 @@
 {
-    "name": "pixelpoems/silverstripe-fuse-search",
+    "name": "pixelpoems/silverstripe-search",
     "type": "silverstripe-vendormodule",
-    "description": "Silverstripe Search-Module including fuse.js.",
+    "description": "Silverstripe Search-Module including loading search results js api requests.",
     "keywords": [
         "silverstripe",
         "search"
@@ -25,7 +25,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Pixelpoems\\FuseSearch\\": "src/"
+            "Pixelpoems\\Search\\": "src/"
         }
     },
     "config": {
@@ -35,7 +35,7 @@
         }
     },
     "extra": {
-        "installer-name": "silverstripe-fuse-search",
+        "installer-name": "silverstripe-search",
         "branch-alias": {
             "dev-main": "1.x-dev"
         },
