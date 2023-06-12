@@ -105,7 +105,7 @@ function getOptions() {
         threshold: 0.5,
         // distance: 100,
         useExtendedSearch: true, // https://fusejs.io/examples.html#extended-search
-        // ignoreLocation: false,
+        ignoreLocation: true,
         // ignoreFieldNorm: false,
         // fieldNormWeight: 1,
         keys: keys
