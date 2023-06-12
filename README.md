@@ -7,6 +7,7 @@ You can use it in combination with Silverstripe [Elemental](https://github.com/s
 * [Requirements](#requirements)
 * [Installation](#installation)
 * [Configuration](#configuration)
+* [Populate Task](#populate-task)
 * [Overwrite Template Files](#overwrite-template-files)
 * [Inline Search](#inline-search)
 * [Enable Search on DataObjects](#enable-search-on-dataobjects)
