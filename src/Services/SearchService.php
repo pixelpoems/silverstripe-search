@@ -74,7 +74,7 @@ class SearchService
 
         // Check if elemental index file exists
         if(file_exists(self::getIndexFile($name . '-elemental'))) {
-            $indexElemental = file_get_contents(self::getIndexFile($this->locale . '-elemental'), '');
+            $indexElemental = file_get_contents(self::getIndexFile($name . '-elemental'), '');
             $data = array_merge($data, json_decode($indexElemental));
         }
 

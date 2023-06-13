@@ -22,6 +22,14 @@ class SearchIndexExtension extends DataExtension
         $this->owner->extend('updateSearchIndexData',$data);
         $data = $this->owner->addSearchData($data);
 
+        foreach ($data as $key => $item) {
+            $update = strip_tags($item);
+            $update = str_replace("&nbsp;", '', $update);
+            $update = str_replace("\n", ' ', $update);
+            $update = str_replace("\/", ' ', $update);
+            $data[$key] = $update;
+        }
+
         $data['id'] = $this->owner->ID;
         $data['class'] = $this->owner->ClassName;
         return $data;

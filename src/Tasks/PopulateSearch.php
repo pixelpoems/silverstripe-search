@@ -13,6 +13,7 @@ use SilverStripe\ORM\DataObject;
 use SilverStripe\Versioned\Versioned;
 use TractorCow\Fluent\Model\Locale;
 use TractorCow\Fluent\State\FluentState;
+
 class PopulateSearch extends BuildTask
 {
     protected $title = '[SEARCH] Populate';
@@ -29,14 +30,16 @@ class PopulateSearch extends BuildTask
         'title'
     ];
 
+    protected $config;
+
     /**
      * @inheritDoc
      */
     public function run($request)
     {
-        $config = Config::inst()->get(SearchController::class);
+        $this->config = Config::inst()->get(SearchController::class);
 
-        if($config['enable_fluent']) {
+        if($this->config['enable_fluent']) {
             $this->log("##########################################");
             $this->log("Fluent is enabled.");
             $this->log("##########################################\n");
@@ -53,26 +56,26 @@ class PopulateSearch extends BuildTask
             }
 
             foreach ($locales as $locale) {
-                FluentState::singleton()->withState(function(FluentState $state) use ($locale, $config) {
+                FluentState::singleton()->withState(function(FluentState $state) use ($locale) {
                     $state->setLocale($locale->Locale);
-                    $this->populate($config, $locale->Locale, $locale->Locale);
+                    $this->populate($locale->Locale, $locale->Locale);
                 });
             }
         } else {
-            $this->populate($config);
+            $this->populate();
 
         }
         $this->log('Successfully written search index!');
     }
 
-    private function populate($config, string $fileName = null, string $locale = null)
+    private function populate(string $fileName = '', string $locale = null)
     {
         if($locale) $this->log('START POPULATING: ' . $locale . "\n");
         else $this->log("START POPULATING\n");
 
         $this->populatePageData($fileName, $locale);
 
-        if($config['enable_elemental']) {
+        if($this->config['enable_elemental']) {
             $this->populateElementData($fileName, $locale);
         }
 
@@ -82,19 +85,19 @@ class PopulateSearch extends BuildTask
         $this->log("##########################################\n");
     }
 
-    private function populatePageData(string $fileName = null, string $locale = null)
+    private function populatePageData(string $fileName = null, $locale = null)
     {
-        $data = $this->getData(Page::class);
+        $data = $this->getData(Page::class, $locale);
 
         if(!$fileName) $fileName = SearchService::getIndexFile('index');
         else $fileName = SearchService::getIndexFile($fileName);
         $this->log('Data Entities (Pages): ' . count($data));
-        $this->writeSearchFile($data, $fileName, $locale);
+        $this->writeSearchFile($data, $fileName);
 
         $this->log($fileName . "\n");
     }
 
-    private function populateElementData(string $fileName = null, string $locale = null)
+    private function populateElementData(string $fileName = null, $locale)
     {
         $this->log('ELEMENTS:');
 
@@ -106,7 +109,7 @@ class PopulateSearch extends BuildTask
             if($class !== BaseElement::class) {
                 if (!in_array($class, $exclude_elements ?? [])) {
                     $this->log($class);
-                    $data = array_merge($data, $this->getData($class));
+                    $data = array_merge($data, $this->getData($class, $locale));
                 }
             }
         }
@@ -114,13 +117,13 @@ class PopulateSearch extends BuildTask
         if(!$fileName) $fileName = SearchService::getIndexFile('index-elemental');
         else $fileName = SearchService::getIndexFile($fileName . '-elemental');
         $this->log('Data Entities (Elements): ' . count($data));
-        $this->writeSearchFile($data, $fileName, $locale);
+        $this->writeSearchFile($data, $fileName);
 
         $this->log($fileName . "\n");
 
     }
 
-    private function getData($class): array
+    private function getData($class, $locale = null): array
     {
         if($class === Page::class) {
             $objects = Versioned::get_by_stage($class, 'Live')
@@ -131,7 +134,13 @@ class PopulateSearch extends BuildTask
 
         $data = [];
         foreach($objects as $object) {
-            $data[] = DataObject::get_by_id($class, $object->ID)->getSearchIndexData();
+            if($this->config['enable_fluent']) {
+                if($object->isPublishedInLocale($locale)) {
+                    $data[] = DataObject::get_by_id($class, $object->ID)->getSearchIndexData();
+                }
+            } else {
+                $data[] = DataObject::get_by_id($class, $object->ID)->getSearchIndexData();
+            }
         }
         return $data;
     }
@@ -140,7 +149,7 @@ class PopulateSearch extends BuildTask
         echo $msg . "\n";
     }
 
-    private function writeSearchFile($data, string $fileName, string $locale = null): string
+    private function writeSearchFile($data, string $fileName): string
     {
         // Check if folder exists
         if(!is_dir(SearchService::getIndexPath())) {

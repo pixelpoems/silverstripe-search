@@ -50,9 +50,6 @@ To Update or set the index keys based on the Class you can extend the Class and 
 public function updateSearchIndexData(array &$data)
 {
     $data['content'] = $this->owner->Content;
-
-    # Make sure to escape html tags e.g. with:
-    $data['content'] = preg_replace('#<[^>]+>#', ' ', $this->owner->Content);
 }
 ```
 
