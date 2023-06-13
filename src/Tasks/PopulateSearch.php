@@ -73,7 +73,7 @@ class PopulateSearch extends BuildTask
         $this->populatePageData($config, $fileName, $locale);
 
         if($config['enable_elemental']) {
-            $fileName = $this->populateElementData($config, $fileName, $locale);
+            $this->populateElementData($config, $fileName, $locale);
         }
 
         if($locale) $this->log($locale . ': SUCCESS' . "\n");
@@ -87,7 +87,7 @@ class PopulateSearch extends BuildTask
         $data = $this->getData(Page::class);
 
         if(!$fileName) $fileName = SearchService::getIndexFile('index');
-        $fileName = SearchService::getIndexFile($fileName);
+        else $fileName = SearchService::getIndexFile($fileName);
         $this->log('Data Entities (Pages): ' . count($data));
         $this->writeSearchFile($data, $fileName, $locale);
 
@@ -104,9 +104,6 @@ class PopulateSearch extends BuildTask
 
         foreach ($availableElementClasses as $class) {
             if($class !== BaseElement::class) {
-                /** @var BaseElement $inst */
-                $inst = singleton($class);
-
                 if (!in_array($class, $exclude_elements ?? [])) {
                     $this->log($class);
                     $data = array_merge($data, $this->getData($class));
@@ -115,7 +112,7 @@ class PopulateSearch extends BuildTask
         }
 
         if(!$fileName) $fileName = SearchService::getIndexFile('index-elemental');
-        $fileName = SearchService::getIndexFile($fileName . '-elemental');
+        else $fileName = SearchService::getIndexFile($fileName . '-elemental');
         $this->log('Data Entities (Elements): ' . count($data));
         $this->writeSearchFile($data, $fileName, $locale);
 
