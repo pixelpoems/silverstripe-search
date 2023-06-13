@@ -40,6 +40,8 @@ Pixelpoems\Search\Tasks\PopulateSearch:
     - title # Title will be added by default if nothing else is defined
     - content # Additional index key
 ```
+Those keys are only for seperating data within the index (more or less for your own structure - this keys wont be displayed in the search result!)
+
 By default, your index file is named `index.json` and will be placed at `/search/` within your project root directory.
 Add `/search` to your `.gitignore` to prevent index files from being pushed to your git repository.
 
@@ -171,6 +173,14 @@ DNADesign\Elemental\Models\BaseElement:
     - Pixelpoems\Search\Extensions\SearchIndexExtension
 ```
 After adding the extension you can use the `updateSearchIndexData` hook to specify your index data.
+
+### Enable Virtual Element Indexing
+If you use Virtual Elements from DNADesign and you want to index the Conected Data for this element you can add the following Extension to the base "ElementVirtual" Class, this will handle the default indexing with the "Linked Element" Data.
+```yml
+DNADesign\ElementalVirtual\Model\ElementVirtual:
+  extensions:
+    - Pixelpoems\Search\Extensions\ElementVirtualExtension
+```
 
 
 ## Config to enable Fluent

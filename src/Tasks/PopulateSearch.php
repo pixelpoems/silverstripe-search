@@ -2,6 +2,7 @@
 namespace Pixelpoems\Search\Tasks;
 
 use DNADesign\Elemental\Models\BaseElement;
+use DNADesign\ElementalVirtual\Model\ElementVirtual;
 use Page;
 use Pixelpoems\Search\Controllers\SearchController;
 use Pixelpoems\Search\Services\SearchService;
@@ -12,7 +13,6 @@ use SilverStripe\ORM\DataObject;
 use SilverStripe\Versioned\Versioned;
 use TractorCow\Fluent\Model\Locale;
 use TractorCow\Fluent\State\FluentState;
-
 class PopulateSearch extends BuildTask
 {
     protected $title = '[SEARCH] Populate';
@@ -70,10 +70,10 @@ class PopulateSearch extends BuildTask
         if($locale) $this->log('START POPULATING: ' . $locale . "\n");
         else $this->log("START POPULATING\n");
 
-        $this->populatePageData($config, $fileName, $locale);
+        $this->populatePageData($fileName, $locale);
 
         if($config['enable_elemental']) {
-            $this->populateElementData($config, $fileName, $locale);
+            $this->populateElementData($fileName, $locale);
         }
 
         if($locale) $this->log($locale . ': SUCCESS' . "\n");
@@ -82,7 +82,7 @@ class PopulateSearch extends BuildTask
         $this->log("##########################################\n");
     }
 
-    private function populatePageData($config, string $fileName = null, string $locale = null)
+    private function populatePageData(string $fileName = null, string $locale = null)
     {
         $data = $this->getData(Page::class);
 
@@ -94,7 +94,7 @@ class PopulateSearch extends BuildTask
         $this->log($fileName . "\n");
     }
 
-    private function populateElementData($config, string $fileName = null, string $locale = null)
+    private function populateElementData(string $fileName = null, string $locale = null)
     {
         $this->log('ELEMENTS:');
 
@@ -122,11 +122,11 @@ class PopulateSearch extends BuildTask
 
     private function getData($class): array
     {
-        $objects = Versioned::get_by_stage($class, 'Live');
-
         if($class === Page::class) {
             $objects = Versioned::get_by_stage($class, 'Live')
                 ->filter(['ShowInSearch' => true]);
+        } else {
+            $objects = Versioned::get_by_stage($class, 'Live');
         }
 
         $data = [];
@@ -140,7 +140,7 @@ class PopulateSearch extends BuildTask
         echo $msg . "\n";
     }
 
-    private function writeSearchFile($data, string $fileName, string $locale = null)
+    private function writeSearchFile($data, string $fileName, string $locale = null): string
     {
         // Check if folder exists
         if(!is_dir(SearchService::getIndexPath())) {
