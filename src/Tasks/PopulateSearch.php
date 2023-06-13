@@ -114,8 +114,8 @@ class PopulateSearch extends BuildTask
             }
         }
 
-        if(!$fileName) $fileName = SearchService::getIndexFile('index-elmental');
-        $fileName = SearchService::getIndexFile($fileName . '-elmental');
+        if(!$fileName) $fileName = SearchService::getIndexFile('index-elemental');
+        $fileName = SearchService::getIndexFile($fileName . '-elemental');
         $this->log('Data Entities (Elements): ' . count($data));
         $this->writeSearchFile($data, $fileName, $locale);
 
