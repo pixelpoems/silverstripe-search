@@ -156,7 +156,7 @@ Pixelpoems\Search\Services\SearchConfig:
   enable_elemental: true
 ```
 
-Furthermore, you can use `exclude_elements` to prevent specific Element Classes from being indexed:
+Furthermore, you can use `exclude_elements_from_index` to prevent specific Element Classes from being indexed:
 ```yml
 Pixelpoems\Search\Services\SearchConfig:
   exclude_elements_from_index:
@@ -186,7 +186,7 @@ To enable fluent within the index and search process add the following to your c
 Pixelpoems\Search\Services\SearchConfig:
   enable_fluent: true
 ```
-If you enabled fluent threw the config the `Populate Search Task` will create an index file for every locale. To prevent a locale from beeing indexed you can add the Locale title within the static variable `prevent_lang_from_index` like this:
+If you enabled fluent threw the config the `Populate Search Task` will create an index file for every locale. To prevent a locale from beeing indexed you can add the Locale title within the static variable `exclude_locale_from_index` like this:
 
 ```yml
 Pixelpoems\Search\Services\SearchConfig:
