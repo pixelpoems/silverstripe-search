@@ -190,7 +190,7 @@ If you enabled fluent threw the config the `Populate Search Task` will create an
 
 ```yml
 Pixelpoems\Search\Services\SearchConfig:
-    exclude_locale_from_index:
+  exclude_locale_from_index:
     - 'de_AT'
     - 'de_DE'
 ```
@@ -216,8 +216,8 @@ Name: my-search-config
 
 Pixelpoems\Search\Services\SearchConfig:
   index_keys:
-      - title
-      - content
+    - title
+    - content
   enable_fluent: true
   exclude_locale_from_index:
     - 'de_AT'
