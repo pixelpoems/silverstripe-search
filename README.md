@@ -244,13 +244,13 @@ By default, your index files are named `{locale}.json`, e.g. `de_AT.json`.
 
 Every config can be made via the `Pixelpoems\Search\Services\SearchConfig` class:
 
-| Name                        |   Default   |
-|-----------------------------|:-----------:|
+| Name                        | Default     |
+|-----------------------------|-------------|
 | index_keys                  | `['title']` |
-| enable_fluent               |   `false`   |
-| exclude_locale_from_index   |    `[]`     |
-| enable_elemental            |   `false`   |
-| exclude_elements_from_index |    `[]`     |
+| enable_fluent               | `false`     |
+| exclude_locale_from_index   | `[]`        |
+| enable_elemental            | `false`     |
+| exclude_elements_from_index | `[]`        |
 
 ```yml
 ---
