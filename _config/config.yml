@@ -5,7 +5,3 @@ Name: silverstripe-search
 Page:
   extensions:
     - Pixelpoems\Search\Extensions\SearchIndexExtension
-
-PageController:
-  extensions:
-    - Pixelpoems\Search\Extensions\PageControllerExtensions

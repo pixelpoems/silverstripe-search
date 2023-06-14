@@ -13,7 +13,7 @@ You can use it in combination with Silverstripe [Elemental](https://github.com/s
 * [Enable Search on DataObjects](#enable-search-on-dataobjects)
 * [Config to enable Elemental](#config-to-enable-elemental)
 * [Config to enable Fluent](#config-to-enable-fluent)
-
+* [Available Config Variables](#available-config-variables)
 
 ## Requirements
 * Silverstripe CMS ^4.0
@@ -35,7 +35,7 @@ Without any special configurations all pages and subclasses of page, which have 
 
 Following variables can be used to configure your search index:
 ```yml
-Pixelpoems\Search\Tasks\PopulateSearch:
+Pixelpoems\Search\Services\SearchConfig:
   index_keys: # Default keys witch will be populated within the json index file
     - title # Title will be added by default if nothing else is defined
     - content # Additional index key
@@ -152,14 +152,14 @@ public function addSearchData($data)
 ## Config to enable Elemental
 To enable indexing elemental add the following to your configuration yml:
 ```yml
-Pixelpoems\Search\Controllers\SearchController:
+Pixelpoems\Search\Services\SearchConfig:
   enable_elemental: true
 ```
 
 Furthermore, you can use `exclude_elements` to prevent specific Element Classes from being indexed:
 ```yml
-Pixelpoems\Search\Controllers\SearchController:
-  exclude_elements:
+Pixelpoems\Search\Services\SearchConfig:
+  exclude_elements_from_index:
     -  Namespace\Elements\Element
 ```
 
@@ -183,19 +183,49 @@ DNADesign\ElementalVirtual\Model\ElementVirtual:
 ## Config to enable Fluent
 To enable fluent within the index and search process add the following to your configuration yml:
 ```yml
-Pixelpoems\Search\Controllers\SearchController:
+Pixelpoems\Search\Services\SearchConfig:
   enable_fluent: true
 ```
 If you enabled fluent threw the config the `Populate Search Task` will create an index file for every locale. To prevent a locale from beeing indexed you can add the Locale title within the static variable `prevent_lang_from_index` like this:
 
 ```yml
-Pixelpoems\Search\Tasks\PopulateSearch:
-  prevent_lang_from_index:
+Pixelpoems\Search\Services\SearchConfig:
+    exclude_locale_from_index:
     - 'de_AT'
     - 'de_DE'
 ```
 By default, your index files are named `{locale}.json`, e.g. `de_AT.json`.
 
+## Available Config Variables
+Every config can be made via the `Pixelpoems\Search\Services\SearchConfig` class:
+
+| Name                               |  Default   |
+|------------------------------------|:----------:|
+| index_keys                         | `['title']` |
+| enable_fluent                      |  `false`   |
+| exclude_locale_from_index          |    `[]`    |
+| enable_elemental                   |  `false`   |
+| exclude_elements_from_index        |    `[]`    |
+
+
+
+```yml
+---
+Name: my-search-config
+---
+
+Pixelpoems\Search\Services\SearchConfig:
+  index_keys:
+      - title
+      - content
+  enable_fluent: true
+  exclude_locale_from_index:
+    - 'de_AT'
+    - 'de_DE'
+  enable_elemental: true
+  exclude_elements_from_index:
+    - 'Namespace\Elements\Element'
+```
 
 ## Reporting Issues
 Please [create an issue](https://github.com/pixelpoems/silverstripe-search/issues) for any bugs you've found, or features you're missing.

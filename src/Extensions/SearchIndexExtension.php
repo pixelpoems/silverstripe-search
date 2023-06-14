@@ -2,8 +2,7 @@
 
 namespace Pixelpoems\Search\Extensions;
 
-use Pixelpoems\Search\Tasks\PopulateSearch;
-use SilverStripe\Core\Config\Config;
+use Pixelpoems\Search\Services\SearchConfig;
 use SilverStripe\ORM\DataExtension;
 
 class SearchIndexExtension extends DataExtension
@@ -11,9 +10,7 @@ class SearchIndexExtension extends DataExtension
     public function getSearchIndexData(): array
     {
         $data = [];
-        $keys = Config::forClass(PopulateSearch::class)->get('index_keys');
-
-        foreach ($keys as $key) {
+        foreach (SearchConfig::getSearchKeys() as $key) {
             $data[$key] = null;
         }
 
@@ -23,6 +20,9 @@ class SearchIndexExtension extends DataExtension
         $data = $this->owner->addSearchData($data);
 
         foreach ($data as $key => $item) {
+            if(gettype($item) === 'array') {
+                $item = implode(' ', $item);
+            }
             $update = strip_tags($item);
             $update = str_replace("&nbsp;", '', $update);
             $update = str_replace("\n", ' ', $update);
