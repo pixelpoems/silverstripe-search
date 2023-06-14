@@ -33,7 +33,7 @@ class SearchController extends Controller
         } else $locale = null;
 
         $value = Convert::raw2sql($request->getVar('value'));
-        $isInline = (bool)Convert::raw2sql($request->getVar('inline'));
+        $isInline = Convert::raw2sql($request->getVar('inline')) === 'true';
 
         if($this->config()->get('enable_fluent') && $locale) {
             $list = FluentState::singleton()->withState(function (FluentState $state) use ($locale, $value, $isInline) {
