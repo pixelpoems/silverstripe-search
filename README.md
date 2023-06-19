@@ -72,7 +72,7 @@ To update the data without extension e.g. on a new PageType you can add the foll
 with your custom list, which should be indexed:
 
 ```php
-public function getList(): DataList
+public function getList()
 {
     return DataObject::get();
 }

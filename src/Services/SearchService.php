@@ -77,12 +77,12 @@ class SearchService
         return $data;
     }
 
-    public static function getIndexPath(): string
+    public static function getIndexPath()
     {
         return BASE_PATH . '/search/';
     }
 
-    public static function getIndexFile($name = null): string
+    public static function getIndexFile($name = null)
     {
         if($name) return self::getIndexPath() . $name . '.json';
         return self::getIndexPath();

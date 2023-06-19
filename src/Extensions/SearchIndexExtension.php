@@ -7,7 +7,7 @@ use SilverStripe\ORM\DataExtension;
 
 class SearchIndexExtension extends DataExtension
 {
-    public function getSearchIndexData(): array
+    public function getSearchIndexData()
     {
         $data = [];
         foreach (SearchConfig::getSearchKeys() as $key) {
@@ -35,7 +35,8 @@ class SearchIndexExtension extends DataExtension
         return $data;
     }
 
-    public function addSearchData($data) {
+    public function addSearchData($data)
+    {
         return $data;
     }
 }

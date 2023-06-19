@@ -119,7 +119,7 @@ class PopulateSearch extends BuildTask
 
     }
 
-    private function getData($class, $locale = null): array
+    private function getData($class, $locale = null)
     {
         if($class === Page::class) {
             $objects = Versioned::get_by_stage($class, 'Live')->filter(['ShowInSearch' => true]);
@@ -150,11 +150,12 @@ class PopulateSearch extends BuildTask
         return $data;
     }
 
-    private function log($msg) {
+    private function log($msg)
+    {
         echo $msg . "\n";
     }
 
-    private function writeSearchFile($data, string $fileName): void
+    private function writeSearchFile($data, string $fileName)
     {
         // Check if folder exists
         if(!is_dir(SearchService::getIndexPath())) {

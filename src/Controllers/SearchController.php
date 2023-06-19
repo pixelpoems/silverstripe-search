@@ -19,7 +19,7 @@ class SearchController extends Controller
         'result'
     ];
 
-    public function result(HTTPRequest $request): DBHTMLText|bool|string
+    public function result(HTTPRequest $request)
     {
         if(SearchConfig::isFluentEnabled() && $request->getVar('locale')) {
             $requestHTMLLocale = Convert::raw2sql($request->getVar('locale'));

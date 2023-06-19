@@ -22,28 +22,28 @@ class SearchConfig
     private static array $exclude_elements_from_index = []; // e.g. 'ElementContent::class'
 
 
-    public static function getSearchKeys(): array
+    public static function getSearchKeys()
     {
         return array_unique(Config::forClass(self::class)->get('index_keys'));
     }
 
-    public static function isFluentEnabled(): bool
+    public static function isFluentEnabled()
     {
         return Config::forClass(self::class)->get('enable_fluent');
     }
 
-    public static function isElementalEnabled(): bool
+    public static function isElementalEnabled()
     {
         return Config::forClass(self::class)->get('enable_elemental');
     }
 
-    public static function getExcludedElements(): array
+    public static function getExcludedElements()
     {
         if(self::isElementalEnabled()) return Config::forClass(self::class)->get('exclude_elements_from_index');
         return [];
     }
 
-    public static function getExcludedLocales(): array
+    public static function getExcludedLocales()
     {
         if(self::isFluentEnabled()) return Config::forClass(self::class)->get('exclude_locale_from_index');
         return [];

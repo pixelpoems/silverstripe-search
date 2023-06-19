@@ -22,7 +22,7 @@ class SearchPage extends \Page
         'ShowInSearch' => false
     ];
 
-    public function getControllerName(): string
+    public function getControllerName()
     {
         return SearchPageController::class;
     }
@@ -34,7 +34,7 @@ class SearchPage extends \Page
         return ($urlSegment) ? $page->URLSegment : $page->Link();
     }
 
-    protected static function get_if_search_page_exists(): ?DataObject
+    protected static function get_if_search_page_exists()
     {
         if ($page = DataObject::get_one(self::class)) {
             return $page;
