@@ -138,7 +138,9 @@ To overwrite the default search templates you can create a `Pixelpoems/Search` f
 * `Pixelpoems/Search/Pages/Layout/SearchPage.ss` for your custom Search Page.
 
 _ATTENTION: If you overwrite the templates, make sure that the required js files are included within the templates or
-will be included via a Controller!_
+will be included via a Controller and the CSS Classes and IDs are there as well. Make sure that the inline search is
+wrapped within an element with the classes `search-holder inline-search-holder` and within a `search-holder` class on
+the search page template!_
 
 If you need additional Variables within your Ajax SearchList Result Template `Pixelpoems/Search/Ajax/SearchList.ss` you
 can extend the `Pixelpoems/Search/Controllers/SearchController` and update the data with the following hook:

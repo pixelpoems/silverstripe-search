@@ -3,21 +3,25 @@ document.addEventListener("DOMContentLoaded", () => {
     if(!openBtn) return;
 
     openBtn.addEventListener('click', (e) => {
-        let search = document.querySelector('#inline-search');
-        let searchInput = document.querySelector('#search-pattern');
-        if(!search || !searchInput) return;
+        let searchBars = document.querySelectorAll('.inline-search-holder');
 
-        search.classList.remove('hidden');
-        openBtn.style.display = 'none';
-        searchInput.focus();
+        searchBars.forEach((searchBar) => {
+            let search = searchBar.querySelector('#inline-search');
+            let searchInput = search.querySelector('#search-pattern');
+            if(!searchInput) return;
 
-        let closeBtn = search.querySelector('#close-inline-search-btn');
-        if(closeBtn) {
-            closeBtn.addEventListener('click', () => {
-                search.classList.add('hidden');
-                openBtn.style.display = 'inline-block';
-                searchInput.value = '';
-            })
-        }
+            search.classList.remove('hidden');
+            openBtn.style.display = 'none';
+            searchInput.focus();
+
+            let closeBtn = search.querySelector('#close-inline-search-btn');
+            if(closeBtn) {
+                closeBtn.addEventListener('click', () => {
+                    search.classList.add('hidden');
+                    openBtn.style.display = 'inline-block';
+                    searchInput.value = '';
+                })
+            }
+        })
     });
 });

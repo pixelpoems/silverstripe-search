@@ -3,7 +3,7 @@
 
         <h1>$Title</h1>
 
-        <div class="search-input-container">
+        <div class="search-holder search-input-container">
             <input id="search-pattern" type="text" placeholder="Search"/>
             <div class="search-loader hidden">
                 <i class="loader"></i>

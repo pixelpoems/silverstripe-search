@@ -7,17 +7,22 @@ let loader = null;
 
 document.addEventListener("DOMContentLoaded", async function (e) {
 
-    const searchInput = document.querySelector('input#search-pattern');
-    if(!searchInput) return;
+    let searchBars = document.querySelectorAll('.search-holder');
 
-    isInlineSearch = !!document.querySelector('#inline-search');
-    loader = document.querySelector('.search-loader');
+    for (const searchBar of searchBars) {
+        const searchInput = searchBar.querySelector('input#search-pattern');
+        if(!searchInput) continue;
 
-    await initURLSearch(searchInput);
+        isInlineSearch = !!searchBar.querySelector('#inline-search');
+        loader = searchBar.querySelector('.search-loader');
 
-    searchInput.addEventListener('keyup', async () => {
-        await handleSearch(searchInput.value);
-    });
+        await initURLSearch(searchInput);
+
+        searchInput.addEventListener('keyup', async () => {
+            await handleSearch(searchInput.value);
+        });
+    }
+
 });
 
 async function initURLSearch(searchInput) {

@@ -3,7 +3,7 @@
     <% require javascript("pixelpoems/silverstripe-search:client/dist/javascript/inline-search.min.js") %>
     <% require css("pixelpoems/silverstripe-search:client/dist/css/search.min.css") %>
 
-    <li>
+    <li class="search-holder inline-search-holder">
         <div id="inline-search" class="search-bar hidden">
             <div  class="search-input-container">
                 <input id="search-pattern" type="text" placeholder="Search"/>
