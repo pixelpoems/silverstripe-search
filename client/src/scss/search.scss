@@ -58,7 +58,7 @@
     }
 }
 
-#js-result-list {
+.js-result-list {
     min-height: 50px;
 
     //.loader {
@@ -78,7 +78,7 @@
 
 }
 
-#js-result-list.inline-search {
+.js-result-list.inline-search {
     position: absolute;
     margin-top: 6rem;
     border: 2px solid black;

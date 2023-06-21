@@ -16,16 +16,15 @@ document.addEventListener("DOMContentLoaded", async function (e) {
         isInlineSearch = !!searchBar.querySelector('.inline-search');
         loader = searchBar.querySelector('.search-loader');
 
-        await initURLSearch(searchInput);
+        await initURLSearch(searchInput, searchBar);
 
         searchInput.addEventListener('keyup', async () => {
-            await handleSearch(searchBar, searchInput.value);
+            await handleSearch(searchInput.value, searchBar);
         });
     }
-
 });
 
-async function initURLSearch(searchInput) {
+async function initURLSearch(searchInput, searchBar) {
     const queryString = window.location.search;
     if(!queryString) return;
 
@@ -33,18 +32,20 @@ async function initURLSearch(searchInput) {
     let value = urlParams.get('value');
 
     if(!value) return;
-    await handleSearch(value);
+    await handleSearch(value, searchBar);
     searchInput.value = value;
 }
 
-async function handleSearch(searchBar, searchValue) {
-    if(searchValue.length < 2) {
-        let resultElement = searchBar.querySelector('.js-result-list');
+async function handleSearch(searchValue, searchBar) {
+    let resultElement = searchBar.querySelector('.js-result-list');
+    if(!resultElement) {
+        resultElement = document.querySelector('.js-result-list');
         if(!resultElement) return;
+    }
 
+    if(searchValue.length < 2) {
         resultElement.textContent = '';
         resultElement.innerHTML = '';
-
         resultElement.classList.add('hidden');
         return;
     }
@@ -55,9 +56,6 @@ async function handleSearch(searchBar, searchValue) {
     if(locale) url += '&locale=' + locale;
 
     downloadUrl(url,(response) => {
-        let resultElement = searchBar.querySelector('.js-result-list');
-        if(!resultElement) return;
-
         resultElement.textContent = '';
         resultElement.innerHTML = response;
 
