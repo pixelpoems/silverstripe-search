@@ -4,20 +4,20 @@
     <% require css("pixelpoems/silverstripe-search:client/dist/css/search.min.css") %>
 
     <li class="search-holder inline-search-holder">
-        <div id="inline-search" class="search-bar hidden">
-            <div  class="search-input-container">
-                <input id="search-pattern" type="text" placeholder="Search"/>
+        <div class="inline-search search-bar hidden">
+            <div class="search-input-container">
+                <input class="search-pattern" type="text" placeholder="Search"/>
                 <div class="search-loader hidden">
                     <i class="loader"></i>
                 </div>
             </div>
 
-            <button id="close-inline-search-btn">Close</button>
+            <button class="close-inline-search-btn">Close</button>
 
-            <div id="js-result-list" class="inline-search hidden"></div>
+            <div class="js-result-list inline-search hidden"></div>
         </div>
 
-        <button id="open-inline-search-btn" class="btn">
+        <button class="open-inline-search-btn btn">
             OPEN SEARCH
         </button>
     </li>

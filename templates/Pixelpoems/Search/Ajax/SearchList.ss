@@ -11,7 +11,7 @@
         <% end_loop %>
         <% if $IsInline && $SearchPageLink %>
             <li>
-                <a href="{$SearchPageLink}" id="search-see-more">See more...</a>
+                <a href="{$SearchPageLink}" class="search-see-more">See more...</a>
             </li>
         <% end_if %>
     </ul>

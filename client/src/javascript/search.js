@@ -10,16 +10,16 @@ document.addEventListener("DOMContentLoaded", async function (e) {
     let searchBars = document.querySelectorAll('.search-holder');
 
     for (const searchBar of searchBars) {
-        const searchInput = searchBar.querySelector('input#search-pattern');
+        const searchInput = searchBar.querySelector('input.search-pattern');
         if(!searchInput) continue;
 
-        isInlineSearch = !!searchBar.querySelector('#inline-search');
+        isInlineSearch = !!searchBar.querySelector('.inline-search');
         loader = searchBar.querySelector('.search-loader');
 
         await initURLSearch(searchInput);
 
         searchInput.addEventListener('keyup', async () => {
-            await handleSearch(searchInput.value);
+            await handleSearch(searchBar, searchInput.value);
         });
     }
 
@@ -37,9 +37,9 @@ async function initURLSearch(searchInput) {
     searchInput.value = value;
 }
 
-async function handleSearch(searchValue) {
+async function handleSearch(searchBar, searchValue) {
     if(searchValue.length < 2) {
-        let resultElement = document.getElementById('js-result-list');
+        let resultElement = searchBar.querySelector('.js-result-list');
         if(!resultElement) return;
 
         resultElement.textContent = '';
@@ -55,7 +55,7 @@ async function handleSearch(searchValue) {
     if(locale) url += '&locale=' + locale;
 
     downloadUrl(url,(response) => {
-        let resultElement = document.getElementById('js-result-list');
+        let resultElement = searchBar.querySelector('.js-result-list');
         if(!resultElement) return;
 
         resultElement.textContent = '';
@@ -66,7 +66,7 @@ async function handleSearch(searchValue) {
         }
 
         // Update Read More Link with search Value
-        let readMoreLink = document.querySelector('a#search-see-more');
+        let readMoreLink = document.querySelector('a.search-see-more');
         if(readMoreLink) readMoreLink.search = `?value=${searchValue}`;
 
         if(loader) loader.classList.add('hidden');
