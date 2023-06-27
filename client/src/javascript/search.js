@@ -3,7 +3,6 @@ let locale = document.querySelector('html').getAttribute('lang');
 locale = locale.replace('-', '_');
 
 let isInlineSearch = false;
-let loader = null;
 
 document.addEventListener("DOMContentLoaded", async function (e) {
 
@@ -14,12 +13,12 @@ document.addEventListener("DOMContentLoaded", async function (e) {
         if(!searchInput) continue;
 
         isInlineSearch = !!searchBar.querySelector('.inline-search');
-        loader = searchBar.querySelector('.search-loader');
+        let loader = searchBar.querySelector('.search-loader');
 
         await initURLSearch(searchInput, searchBar);
 
         searchInput.addEventListener('keyup', async () => {
-            await handleSearch(searchInput.value, searchBar);
+            await handleSearch(searchInput.value, searchBar, loader);
         });
     }
 });
@@ -36,7 +35,7 @@ async function initURLSearch(searchInput, searchBar) {
     searchInput.value = value;
 }
 
-async function handleSearch(searchValue, searchBar) {
+async function handleSearch(searchValue, searchBar, loader) {
     let resultElement = searchBar.querySelector('.js-result-list');
     if(!resultElement) {
         resultElement = document.querySelector('.js-result-list');
