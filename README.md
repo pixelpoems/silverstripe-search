@@ -161,6 +161,11 @@ All the Variables, that are added here can be accessed in your custom `Ajax/Sera
 This module includes an inline search. The listing within the inline search will display up to ten search results and
 a "See more..." item which navigates to the search page which will display all search results in a list.
 
+Include the InlineSearch Template within your template:
+```ss
+<% include Pixelpoems\Search\Includes\InlineSearch %>
+```
+
 ## Enable Search on DataObjects
 
 If you want to add data of an DataObject you can add text like described in the [Configuration](#configuration) section indexing a page or an element.
