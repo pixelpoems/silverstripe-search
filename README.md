@@ -253,6 +253,7 @@ Every config can be made via the `Pixelpoems\Search\Services\SearchConfig` class
 | exclude_locale_from_index   | `[]`        |
 | enable_elemental            | `false`     |
 | exclude_elements_from_index | `[]`        |
+| max_results_inline          | `10`        |
 
 ```yml
 ---
@@ -270,6 +271,7 @@ Pixelpoems\Search\Services\SearchConfig:
   enable_elemental: true
   exclude_elements_from_index:
     - 'Namespace\Elements\Element'
+  max_results_inline: 10
 ```
 
 ## Reporting Issues

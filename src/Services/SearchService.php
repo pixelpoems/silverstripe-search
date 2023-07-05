@@ -9,16 +9,17 @@ class SearchService
 {
     use Injectable;
 
-    private $isInline = null;
-    private $locale = null;
-    private $value = '';
+    private bool $isInline;
+    private string $locale;
+    private string $value;
 
-    public function __construct($value = '', $locale = null, $isInline = false)
+    public function __construct($value = '', $locale = '', $isInline = false)
     {
         $this->value = $value;
         $this->locale = $locale;
 
-        // If isInline return max 10 results
+        // If isInline return max results
+        // Defined in Config
         $this->isInline = $isInline;
     }
     public function getSearchResult()
@@ -29,8 +30,7 @@ class SearchService
 
         foreach (SearchConfig::getSearchKeys() as $key) {
             foreach ($src as $item) {
-                if(!isset($item->class)) return;
-                if (preg_match("/" . $this->value . "/i", $item->$key)) {
+                if (isset($item->class) && preg_match("/" . $this->value . "/i", $item->$key)) {
                     $entity = DataObject::get($item->class)->byID($item->id);
 
                     // Check if Entity exists and current member can view it
@@ -39,13 +39,15 @@ class SearchService
                         // Check if Entity does not already exist in list
                         if(!array_keys($list->map()->keys(), $entity->ID)) {
                             $list->push($entity);
+                            if($this->isInline && $list->count() >= SearchConfig::getMaxResultsInline()) break;
                         }
                     }
                 }
             }
+            if($this->isInline && $list->count() >= SearchConfig::getMaxResultsInline()) break;
         };
 
-        if($this->isInline) return $list->limit(10);
+        if($this->isInline) return $list->limit(SearchConfig::getMaxResultsInline());
         return $list;
     }
 
