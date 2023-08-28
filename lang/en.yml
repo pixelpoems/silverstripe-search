@@ -2,3 +2,4 @@ en:
   Pixelpoems\Search\Pages\SearchPage:
     SINGULARNAME: 'Search Page'
     PLURALNAME: 'Search Pages'
+    Search: 'Search'

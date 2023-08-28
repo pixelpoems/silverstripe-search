@@ -1,103 +1,152 @@
-.hidden {
-    display: none;
+:root {
+  --search-input-w: 300px;
+  --btn-w: 24px;
 }
 
-.search-input-container {
+
+
+.search-holder {
     position: relative;
 
-
-    input {
-        width: 100%;
-        font-size: 20px;
-        box-sizing: border-box;
-    }
-
-    .search-loader {
-        position: absolute;
-        right: 10px;
-        top: calc(50% - 10px);
-
-        i.loader {
-            position: relative;
-            height: 20px;
-            width: 20px;
-            display: inline-block;
-            animation: around 5.4s infinite;
-
-            &::after, &::before {
-                content: "";
-                background: white;
-                position: absolute;
+    .search-input-container {
+        position: relative;
+        @media only screen and (min-width: 768px) {
+            max-width: 50%;
+        }
+        input {
+            width: 100%;
+        }
+        .search-loader {
+            position: absolute;
+            right: 0;
+            transform: translateY(-50%);
+            top: 50%;
+            display: flex;
+            align-items: center;
+            .loader {
+                width: calc(0.5 * var(--btn-w));
+                height: calc(0.5 * var(--btn-w));
+                border: 1px solid #333;
+                border-bottom-color: transparent;
+                border-radius: 50%;
                 display: inline-block;
-                width: 100%;
-                height: 100%;
-                border-width: 2px;
-                border-color: #333 #333 transparent transparent;
-                border-style: solid;
-                border-radius: 20px;
                 box-sizing: border-box;
-                top: 0;
-                left: 0;
-                animation: around 0.7s ease-in-out infinite;
-            }
-
-            &::after {
-                animation: around 0.7s ease-in-out 0.1s infinite;
-                background: transparent;
+                animation: rotation 1s linear infinite;
             }
         }
     }
-}
 
-@keyframes around {
-    0% {
-        transform: rotate(0deg)
+    &__inline {
+        .search-input-container {
+            display: flex;
+            justify-content: flex-end;
+            width: auto;
+            max-width: none;
+            .search-bar{
+                display: flex;
+                width:0;
+                overflow: hidden;
+                transition-property: width;
+                transition-duration: .3s;
+                .btn__close {
+                    margin-left:calc(-1 * var(--btn-w));
+                    color: black;
+                }
+                &.active {
+                    width:var(--search-input-w);
+                }
+            }
+            .search-loader {
+                right: calc(0.5rem + var(--btn-w));
+            }
+        }
     }
-    100% {
-        transform: rotate(360deg)
+
+    .btn {
+        background-color: transparent;
+        padding:0;
+        margin:0;
+        width:var(--btn-w);
+        display: flex;
+        align-items: center;
     }
 }
 
-.js-result-list {
-    min-height: 50px;
-
-    //.loader {
-    //    border: 5px solid #f3f3f3; /* Light grey */
-    //    border-top: 5px solid #575757; /* Dark Gray */
-    //    border-radius: 50%;
-    //    width: 100px;
-    //    height: 100px;
-    //    animation: spin 2s linear infinite;
-    //    margin: 2rem auto;
-    //}
-    //
-    //@keyframes spin {
-    //    0% { transform: rotate(0deg); }
-    //    100% { transform: rotate(360deg); }
-    //}
-
-}
-
-.js-result-list.inline-search {
+.search-result__inline {
     position: absolute;
-    margin-top: 6rem;
-    border: 2px solid black;
+    top:2.5rem;
+    right: 0;
     background: white;
     z-index: 100;
-
-    //.loader {
-    //    margin: auto;
-    //    width: 50px;
-    //    height: 50px;
-    //}
-
+    min-width: var(--search-input-w);
+    min-height: 50px;
+    box-shadow: rgba(100,100,100,.2) 0px 7px 24px 0px;
     ul {
+        padding: 1rem;
         flex-direction: column;
         max-height: 50vh;
         overflow-y: auto;
-
         li {
             border-bottom: 1px solid black;
         }
     }
+}
+
+@keyframes rotation {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+} 
+
+
+
+
+
+// utility classes
+
+.sr-only {
+    position: absolute;
+    clip: rect(1px, 1px, 1px, 1px);
+    padding: 0;
+    border: 0;
+    height: 1px;
+    width: 1px;
+    overflow: hidden;
+}
+.hidden {
+    display: none;
+}
+
+
+
+
+
+
+// some classes, when simple them is used
+
+.search-holder {
+    // prevent floating, when used with simple theme
+    .btn {
+        float: none;
+    }
+}
+
+.search-bar {
+    // reset positioning, when used with simple theme
+    position: inherit;
+    right: auto;
+    left: auto;
+    top: auto;
+    background-color: transparent;
+    padding:0;
+}
+
+.header .lastUnit {
+   overflow: inherit;
+}
+.header nav {
+    display: none;
 }

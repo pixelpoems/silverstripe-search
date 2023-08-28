@@ -2,3 +2,4 @@ de:
   Pixelpoems\Search\Pages\SearchPage:
     SINGULARNAME: 'Suche Seite'
     PLURALNAME: 'Suche Seiten'
+    Search: 'Suche'
