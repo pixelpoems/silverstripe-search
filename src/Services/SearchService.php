@@ -16,7 +16,7 @@ class SearchService
     public function __construct($value = '', $locale = '', $isInline = false)
     {
         $this->value = $value;
-        $this->locale = $locale;
+        if($locale) $this->locale = $locale;
 
         // If isInline return max results
         // Defined in Config
