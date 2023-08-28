@@ -3,3 +3,6 @@ en:
     SINGULARNAME: 'Search Page'
     PLURALNAME: 'Search Pages'
     Search: 'Search'
+    Matches: 'Matches'
+    NoResults: 'Sorry, but nothing matched your search'
+    MoreResults: 'more results'

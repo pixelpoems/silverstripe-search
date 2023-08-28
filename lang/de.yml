@@ -3,3 +3,6 @@ de:
     SINGULARNAME: 'Suche Seite'
     PLURALNAME: 'Suche Seiten'
     Search: 'Suche'
+    Matches: 'Treffer'
+    NoResults: 'Leider konnte nichts gefunden werden'
+    MoreResults: 'weiter Ergebnisse'

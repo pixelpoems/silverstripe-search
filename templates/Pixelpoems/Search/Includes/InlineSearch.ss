@@ -28,7 +28,6 @@
 
         <div class="search-result search-result__inline js-result-list hidden"></div>
 
-        <%-- <div class="search-result js-result-list inline-search hidden"></div> --%>
     </div>
 <% end_if %>
 

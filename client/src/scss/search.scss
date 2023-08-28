@@ -3,8 +3,6 @@
   --btn-w: 24px;
 }
 
-
-
 .search-holder {
     position: relative;
 
@@ -82,13 +80,15 @@
     min-height: 50px;
     box-shadow: rgba(100,100,100,.2) 0px 7px 24px 0px;
     ul {
-        padding: 1rem;
-        flex-direction: column;
+        border-top: 1px solid black;
         max-height: 50vh;
         overflow-y: auto;
         li {
             border-bottom: 1px solid black;
         }
+    }
+    > div {
+        padding: 1rem;
     }
 }
 

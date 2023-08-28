@@ -1,20 +1,22 @@
 <div>
-    Matches: $List.Count
-</div>
+    <p><%t Pixelpoems\Search\Pages\SearchPage.Matches 'Matches' %>: $List.Count</p>
 
-<% if $List && $List.Count > 0 %>
-    <ul>
-        <% loop $List %>
-            <li>
-                <a href="$Link">$Title</a>
-            </li>
-        <% end_loop %>
+    <% if $List && $List.Count > 0 %>
+        <ul>
+            <% loop $List %>
+                <li>
+                    <a href="$Link">$Title</a>
+                </li>
+            <% end_loop %>
+        </ul>
+
         <% if $IsInline && $SearchPageLink %>
-            <li>
-                <a href="{$SearchPageLink}" class="search-see-more">See more...</a>
-            </li>
+            <a href="{$SearchPageLink}" class="search-result__more"><%t Pixelpoems\Search\Pages\SearchPage.MoreResults 'See more' %></a>
         <% end_if %>
-    </ul>
-<% else %>
-    No search results
-<% end_if %>
+
+    <% else %>
+        <p>
+        <%t Pixelpoems\Search\Pages\SearchPage.NoResults 'No results' %>
+        </p>
+    <% end_if %>
+</div>
