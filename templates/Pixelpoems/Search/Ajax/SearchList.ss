@@ -2,7 +2,7 @@
     <p><%t Pixelpoems\Search\Pages\SearchPage.Matches 'Matches' %>: $List.Count</p>
 
     <% if $List && $List.Count > 0 %>
-        <ul>
+        <ul class="search-result__list">
             <% loop $List %>
                 <li>
                     <a href="$Link">$Title</a>

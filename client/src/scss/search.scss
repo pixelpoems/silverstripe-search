@@ -1,18 +1,25 @@
 :root {
-  --search-input-w: 300px;
-  --btn-w: 24px;
+  --search-input-w: 15rem;
+  --search-btn-w: 24px;
+  --search-space: 0.5rem;
 }
 
 .search-holder {
     position: relative;
-
     .search-input-container {
         position: relative;
         @media only screen and (min-width: 768px) {
             max-width: 50%;
         }
-        input {
+        label {
+            display: flex;
+            align-items: center;
+            margin-right: var(--search-space);
+        }
+        .search-bar input[type=text] {
             width: 100%;
+            border: 1px solid gray;
+            height: 2rem;
         }
         .search-loader {
             position: absolute;
@@ -21,9 +28,10 @@
             top: 50%;
             display: flex;
             align-items: center;
-            .loader {
-                width: calc(0.5 * var(--btn-w));
-                height: calc(0.5 * var(--btn-w));
+            &:before{
+                content:"";
+                width: calc(0.5 * var(--search-btn-w));
+                height: calc(0.5 * var(--search-btn-w));
                 border: 1px solid #333;
                 border-bottom-color: transparent;
                 border-radius: 50%;
@@ -32,7 +40,18 @@
                 animation: rotation 1s linear infinite;
             }
         }
+        .btn {
+            cursor: pointer;
+            background-color: transparent;
+            border: 0;
+            padding: 0;
+            margin: 0;
+            width:var(--search-btn-w);
+            display: inline-flex;
+            align-items: center;
+        }
     }
+
 
     &__inline {
         .search-input-container {
@@ -47,7 +66,7 @@
                 transition-property: width;
                 transition-duration: .3s;
                 .btn__close {
-                    margin-left:calc(-1 * var(--btn-w));
+                    margin-left:calc(-1 * var(--search-btn-w));
                     color: black;
                 }
                 &.active {
@@ -55,42 +74,42 @@
                 }
             }
             .search-loader {
-                right: calc(0.5rem + var(--btn-w));
+                right: calc(0.5rem + var(--search-btn-w));
             }
         }
     }
 
-    .btn {
-        background-color: transparent;
-        padding:0;
-        margin:0;
-        width:var(--btn-w);
-        display: flex;
-        align-items: center;
+    .search-result {
+        ul.search-result__list {
+            list-style-type: none;
+            padding: 0;
+            margin: var(--search-space) 0;
+        }
+        &__inline {
+            position: absolute;
+            top:2.5rem;
+            right: 0;
+            background: white;
+            z-index: 100;
+            min-width: var(--search-input-w);
+            min-height: 50px;
+            box-shadow: rgba(100,100,100,.2) 0px 7px 24px 0px;
+            ul.search-result__list {
+                border-top: 1px solid black;
+                max-height: 50vh;
+                overflow-y: auto;
+                li {
+                    border-bottom: 1px solid black;
+                }
+            }
+            > div {
+                padding: 1rem;
+            }
+        }
     }
 }
 
-.search-result__inline {
-    position: absolute;
-    top:2.5rem;
-    right: 0;
-    background: white;
-    z-index: 100;
-    min-width: var(--search-input-w);
-    min-height: 50px;
-    box-shadow: rgba(100,100,100,.2) 0px 7px 24px 0px;
-    ul {
-        border-top: 1px solid black;
-        max-height: 50vh;
-        overflow-y: auto;
-        li {
-            border-bottom: 1px solid black;
-        }
-    }
-    > div {
-        padding: 1rem;
-    }
-}
+
 
 @keyframes rotation {
     0% {
@@ -117,8 +136,12 @@
     overflow: hidden;
 }
 .hidden {
-    display: none;
+    display: none !important;
 }
+
+
+
+
 
 
 
@@ -134,7 +157,7 @@
     }
 }
 
-.search-bar {
+.search-holder .search-bar {
     // reset positioning, when used with simple theme
     position: inherit;
     right: auto;

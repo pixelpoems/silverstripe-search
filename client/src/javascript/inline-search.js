@@ -6,14 +6,12 @@ document.addEventListener("DOMContentLoaded", () => {
             let searchBars = document.querySelectorAll('.search-holder__inline');
 
             searchBars.forEach((searchBar) => {
-                let search = searchBar.querySelector('.search-bar__inline');
+                let search = searchBar.querySelector('.search-bar');
                 let searchInput = search.querySelector('.search-input');
                 if(!searchInput) return;
 
                 search.classList.add('active');
-                // openBtn.style.display = 'none';
                 searchInput.focus();
-
                 let closeBtn = search.querySelector('.btn__close');
                 if(closeBtn) {
                     closeBtn.addEventListener('click', () => {
