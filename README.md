@@ -247,6 +247,46 @@ Pixelpoems\Search\Services\SearchConfig:
 
 By default, your index files are named `{locale}.json`, e.g. `de_AT.json`.
 
+## Modify Search Result
+There are multiple hooks to modify the search result before sending the generated list to the template:
+
+Add an extension to SearchService:
+```yml
+Pixelpoems\Search\Services\SearchService:
+  extensions:
+    - Namespace\Extensions\SearchServiceExtension
+```
+
+### Modify List BEFORE limiting result
+
+Use the hook `updateSearchResultBeforeLimit` for instance to filter the results on a specific Mulitsite if you use e.g. https://github.com/symbiote/silverstripe-multisites
+```php
+    public function updateSearchResultBeforeLimit(&$list): void
+    {
+        $currentSiteID = Multisites::inst()->getCurrentSiteId();
+        $list = $list->filter(['SiteID' => $currentSiteID]);
+    }
+```
+The limitation of the list (for Inline Search) will be added after the hook.
+
+
+### Modify List AFTER limiting result
+Use the hook `updateSearchResultAfterLimit` for instance to filter the results after the limitation has been added to the list.
+```php
+    public function updateSearchResultAfterLimit(&$list): void
+    {
+        // Do some extra filter or attachment here
+    }
+```
+This will hook will only be called on a request that is made by the inline search!
+If you want to modify the result after limitation for inline search AND on the Search page use the hook `updateSearchResult`:
+```php
+    public function updateSearchResult(&$list): void
+    {
+        // Do some extra filter or attachment here
+    }
+```
+
 ## Available Config Variables
 
 Every config can be made via the `Pixelpoems\Search\Services\SearchConfig` class:

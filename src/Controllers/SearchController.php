@@ -43,8 +43,6 @@ class SearchController extends Controller
             $list = $search->getSearchResult();
         }
 
-        $this->extend('updateList', $list);
-
         return $this->generateResponse($locale, $list, $isInline);
     }
 

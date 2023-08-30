@@ -1,11 +1,12 @@
 <?php
 namespace Pixelpoems\Search\Services;
 
+use SilverStripe\Control\Controller;
 use SilverStripe\Core\Injector\Injectable;
 use SilverStripe\ORM\ArrayList;
 use SilverStripe\ORM\DataObject;
 
-class SearchService
+class SearchService extends Controller
 {
     use Injectable;
 
@@ -47,7 +48,14 @@ class SearchService
             if($this->isInline && $list->count() >= SearchConfig::getMaxResultsInline()) break;
         };
 
-        if($this->isInline) return $list->limit(SearchConfig::getMaxResultsInline());
+        $this->extend('updateSearchResultBeforeLimit', $list);
+        if($this->isInline) {
+            $list = $list->limit(SearchConfig::getMaxResultsInline());
+            $this->extend('updateSearchResultAfterLimit', $list);
+        }
+
+        $this->extend('updateSearchResult', $list);
+
         return $list;
     }
 
