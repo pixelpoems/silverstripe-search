@@ -1,25 +1,27 @@
 document.addEventListener("DOMContentLoaded", () => {
-    let openBtns = document.querySelectorAll('.open-inline-search-btn');
+    let openBtns = document.querySelectorAll('.btn__search');
 
     openBtns.forEach(openBtn => {
         openBtn.addEventListener('click', (e) => {
-            let searchBars = document.querySelectorAll('.inline-search-holder');
+            let searchBars = document.querySelectorAll('.search-holder__inline');
 
             searchBars.forEach((searchBar) => {
-                let search = searchBar.querySelector('.inline-search');
-                let searchInput = search.querySelector('.search-pattern');
+                let search = searchBar.querySelector('.search-bar');
+                let searchInput = search.querySelector('.search-input');
                 if(!searchInput) return;
 
-                search.classList.remove('hidden');
-                openBtn.style.display = 'none';
+                search.classList.add('active');
                 searchInput.focus();
-
-                let closeBtn = search.querySelector('.close-inline-search-btn');
+                let closeBtn = search.querySelector('.btn__close');
                 if(closeBtn) {
                     closeBtn.addEventListener('click', () => {
-                        search.classList.add('hidden');
+                        search.classList.remove('active');
                         openBtn.style.display = 'inline-block';
                         searchInput.value = '';
+
+                        let resultElement = searchBar.querySelector('.js-result-list');
+                        resultElement.innerHTML = '';
+                        resultElement.classList.add('hidden');
                     })
                 }
             })

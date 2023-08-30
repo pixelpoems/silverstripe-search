@@ -9,10 +9,10 @@ document.addEventListener("DOMContentLoaded", async function (e) {
     let searchBars = document.querySelectorAll('.search-holder');
 
     for (const searchBar of searchBars) {
-        const searchInput = searchBar.querySelector('input.search-pattern');
+        const searchInput = searchBar.querySelector('input.search-input');
         if(!searchInput) continue;
 
-        isInlineSearch = !!searchBar.querySelector('.inline-search');
+        isInlineSearch = !!searchBar.querySelector('.search-result__inline');
         let loader = searchBar.querySelector('.search-loader');
 
         await initURLSearch(searchInput, searchBar);
@@ -63,7 +63,8 @@ async function handleSearch(searchValue, searchBar, loader) {
         }
 
         // Update Read More Link with search Value
-        let readMoreLink = document.querySelector('a.search-see-more');
+        let readMoreLink = document.querySelector('a.search-result__more');
+        console.log(readMoreLink);
         if(readMoreLink) readMoreLink.search = `?value=${searchValue}`;
 
         if(loader) loader.classList.add('hidden');

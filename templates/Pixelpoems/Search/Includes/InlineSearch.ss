@@ -3,24 +3,24 @@
     <% require javascript("pixelpoems/silverstripe-search:client/dist/javascript/inline-search.min.js") %>
     <% require css("pixelpoems/silverstripe-search:client/dist/css/search.min.css") %>
 
-    <li class="search-holder inline-search-holder">
-        <div class="inline-search search-bar hidden">
-            <div class="search-input-container">
-                <input class="search-pattern" type="text" placeholder="Search"/>
-                <div class="search-loader hidden">
-                    <i class="loader"></i>
-                </div>
+    <div class="search-holder search-holder__inline">
+        <div class="search-input-container" role="search">
+            <label for="search">
+                <span class="sr-only"><%t Pixelpoems\Search\Pages\SearchPage.Search 'Search' %></span>
+                <button class="btn btn__search">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-search"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                </button>
+            </label>
+            <div class="search-bar">
+                <input class="search-input" id="search" type="text" placeholder="<%t Pixelpoems\Search\Pages\SearchPage.Search 'Search' %>"/>
+                <span class="search-loader hidden"></span>
+                <button class="btn btn__close">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
             </div>
-
-            <button class="close-inline-search-btn">Close</button>
-
-            <div class="js-result-list inline-search hidden"></div>
         </div>
-
-        <button class="open-inline-search-btn btn">
-            OPEN SEARCH
-        </button>
-    </li>
+        <div class="search-result search-result__inline js-result-list hidden"></div>
+    </div>
 <% end_if %>
 
 
