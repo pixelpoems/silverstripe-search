@@ -63,10 +63,10 @@ class SearchController extends Controller
             return FluentState::singleton()->withState(function(FluentState $state) use ($locale, $data) {
                 $state->setLocale($locale);
 
-                return $this->customise($data)->renderWith('Pixelpoems\\Search\\Ajax\\SearchList');
+                return $this->customise($data)->renderWith('Pixelpoems\\Search\\Ajax\\SearchResultList');
             });
         } else {
-            return $this->customise($data)->renderWith('Pixelpoems\\Search\\Ajax\\SearchList');
+            return $this->customise($data)->renderWith('Pixelpoems\\Search\\Ajax\\SearchResultList');
         }
     }
 }

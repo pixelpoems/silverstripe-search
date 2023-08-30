@@ -133,7 +133,7 @@ enabled) or
 
 To overwrite the default search templates you can create a `Pixelpoems/Search` folder within your project templates.
 
-* `Pixelpoems/Search/Ajax/SearchList.ss` for the rendered Search result.
+* `Pixelpoems/Search/Ajax/SearchResultList.ss` for the rendered Search result.
 * `Pixelpoems/Search/Includes/InlineSearch.ss` for inline Search output.
 * `Pixelpoems/Search/Pages/Layout/SearchPage.ss` for your custom Search Page.
 
@@ -142,7 +142,7 @@ will be included via a Controller and the CSS Classes and IDs are there as well.
 wrapped within an element with the classes `search-holder inline-search-holder` and within a `search-holder` class on
 the search page template!_
 
-If you need additional Variables within your Ajax SearchList Result Template `Pixelpoems/Search/Ajax/SearchList.ss` you
+If you need additional Variables within your Ajax Search Result List Template `Pixelpoems/Search/Ajax/SearchResultList.ss` you
 can extend the `Pixelpoems/Search/Controllers/SearchController` and update the data with the following hook:
 
 ```php
@@ -284,6 +284,6 @@ Pixelpoems\Search\Services\SearchConfig:
 Please [create an issue](https://github.com/pixelpoems/silverstripe-search/issues) for any bugs you've found, or
 features you're missing.
 
-## Todo
-- Give credits to feather icons
+## Credits
+Search and Close icons from Feather Icons - https://feathericons.com/
 
