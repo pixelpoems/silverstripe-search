@@ -69,6 +69,7 @@
                 .btn__close {
                     margin-left:calc(-1 * var(--search-btn-w));
                     color: black;
+                    z-index: 1;
                 }
                 &.active {
                     width:var(--search-input-w);
