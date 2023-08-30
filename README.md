@@ -215,7 +215,7 @@ After adding the extension you can use the `updateSearchIndexData` hook to speci
 
 ### Enable Virtual Element Indexing
 
-If you use Virtual Elements from DNADesign and you want to index the Conected Data for this element you can add the
+If you use Virtual Elements from DNADesign and you want to index the Connected Data for this element you can add the
 following Extension to the base "ElementVirtual" Class, this will handle the default indexing with the "Linked Element"
 Data.
 
