@@ -133,21 +133,28 @@ class PopulateSearch extends BuildTask
 
                 if($object->getExtensionInstance(FluentVersionedExtension::class)) {
                     if($object->isPublishedInLocale($locale)) {
-                        $data[] = DataObject::get_by_id($class, $object->ID)->getSearchIndexData();
+                        $data[] = $this->getSearchIndexOfDataObject($class, $object->ID);
                     }
                 } else if ($object->getExtensionInstance(FluentExtension::class)) {
                     if($object->isPublished($locale)) {
-                        $data[] = DataObject::get_by_id($class, $object->ID)->getSearchIndexData();
+                        $data[] = $this->getSearchIndexOfDataObject($class, $object->ID);
                     }
                 } else {
-                    $data[] = DataObject::get_by_id($class, $object->ID)->getSearchIndexData();
+                    $data[] = $this->getSearchIndexOfDataObject($class, $object->ID);
                 }
 
             } else {
-                $data[] = DataObject::get_by_id($class, $object->ID)->getSearchIndexData();
+                $data[] = $this->getSearchIndexOfDataObject($class, $object->ID);
             }
         }
         return $data;
+    }
+
+    private function getSearchIndexOfDataObject($class, $objectID)
+    {
+        $object = DataObject::get_by_id($class, $objectID);
+        if(!$object) return;
+        return $object->getSearchIndexData();
     }
 
     private function log($msg)
