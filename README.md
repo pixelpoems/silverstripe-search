@@ -127,7 +127,31 @@ php vendor/silverstripe/framework/cli-script.php dev/tasks/search-populate
 ```
 
 This Task will create based on your configuration an `index.json` and an `index-elemental.json` (if elemental is
-enabled) or
+enabled) or `locale.json` and `locale-elemental.json` (if fluent is enabled).
+
+You can extend the search population and add additional Data like that:
+```yml
+Pixelpoems\Search\Services\PopulateService:
+  extensions:
+    - Namespace\PopulateSearchExtension
+```
+
+```php
+public function populateAdditionalData($pageIndexFileName, $locale)
+{
+    $dataObjects = ClassInfo::subclassesFor(DataObject::class);
+    foreach ($dataObjects as $dataObject) {
+        $additionalData = $this->owner->getData($dataObject, $locale);
+        $this->owner->log('Data Entities (DataObject / '. $dataObject . '): ' . count($additionalData));
+        $this->owner->writeSearchFile($additionalData, $pageIndexFileName);
+    }
+
+    $this->owner->log($pageIndexFileName . "\n");
+}
+```
+Your Data will be saved within `index.json` or `locale.json`
+
+ATTENTION: Make sure your DataObject has a Link function, so that it can be linked within the search result.
 
 ## Overwrite Template Files
 
