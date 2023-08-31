@@ -137,13 +137,15 @@ Pixelpoems\Search\Services\PopulateService:
 ```
 
 ```php
-public function populateAdditionalData($pageIndexFileName, $locale)
+public function populateAdditionalData($pageIndexFileName, $locale, &$additionalData)
 {
     $dataObjects = ClassInfo::subclassesFor(DataObject::class);
     foreach ($dataObjects as $dataObject) {
         $additionalData = $this->owner->getData($dataObject, $locale);
         $this->owner->log('Data Entities (DataObject / '. $dataObject . '): ' . count($additionalData));
-        $this->owner->writeSearchFile($additionalData, $pageIndexFileName);
+
+        // Add your additional data to the given array to return this data!
+        $additionalData = array_merge($additionalData, $additionalData);
     }
 
     $this->owner->log($pageIndexFileName . "\n");

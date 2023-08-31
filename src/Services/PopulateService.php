@@ -19,10 +19,12 @@ class PopulateService extends Controller
      */
     public function populate(string $fileName = '', string $locale = null)
     {
-        $pageIndexFileName = $this->populatePageData($fileName, $locale);
-        $count = 0;
-        $this->extend('populateAdditionalData', $pageIndexFileName, $locale, $count);
-        $this->log('Additional Data populated: ' . $count  . "\n");
+        [$pageIndexFileName, $pageData] = $this->populatePageData($fileName, $locale);
+        $additionalData = [];
+        $this->extend('populateAdditionalData', $pageIndexFileName, $locale, $additionalData);
+        $this->log('Additional Data populated: ' . count($additionalData)  . "\n");
+        $this->writeSearchFile($additionalData, $pageIndexFileName);
+
 
         if(SearchConfig::isElementalEnabled()) {
             $this->populateElementData($fileName, $locale);
@@ -40,7 +42,7 @@ class PopulateService extends Controller
 
         $this->log($fileName . "\n");
 
-        return $fileName;
+        return [$fileName, $data];
     }
 
     /**
@@ -109,7 +111,7 @@ class PopulateService extends Controller
         return $object->getSearchIndexData();
     }
 
-    public function writeSearchFile($data, string $fileName)
+    private function writeSearchFile($data, string $fileName)
     {
         // Check if folder exists
         if(!is_dir(SearchService::getIndexPath())) {
