@@ -3,10 +3,6 @@
         <% if $IsInline %>
             <% if $List.Count < 10 %>
                 <%t Pixelpoems\Search\Pages\SearchPage.Matches 'Matches' %>: $List.Count
-            <% else %>
-                <% if $IsInline && $SearchPageLink %>
-                    <a href="{$SearchPageLink}" class="search-result__more"><%t Pixelpoems\Search\Pages\SearchPage.MoreResults 'See more' %></a>
-                <% end_if %>
             <% end_if %>
         <% else %>
             <%t Pixelpoems\Search\Pages\SearchPage.Matches 'Matches' %>: $List.Count
