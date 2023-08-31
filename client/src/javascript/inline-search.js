@@ -10,6 +10,14 @@ document.addEventListener("DOMContentLoaded", () => {
                     if(!searchInput) return;
                     search.classList.add('active');
                     searchInput.focus();
+
+                    let closeBtn = search.querySelector('.btn__close');
+                    if(closeBtn) {
+                        closeBtn.addEventListener('click', () => {
+                            search.classList.remove('active');
+                            openBtn.style.display = 'inline-block';
+                        })
+                    }
                 })
             });
         });
@@ -19,12 +27,16 @@ document.addEventListener("DOMContentLoaded", () => {
     if(closeBtns) {
         closeBtns.forEach(closeBtn => {
             closeBtn.addEventListener('click', () => {
-                search.classList.remove('active');
-                openBtn.style.display = 'inline-block';
-                searchInput.value = '';
-                let resultElement = searchBar.querySelector('.js-result-list');
-                resultElement.innerHTML = '';
-                resultElement.classList.add('hidden');
+                let searchInputs = document.querySelectorAll('.search-input');
+                searchInputs.forEach(input => {
+                    input.value = '';
+                })
+
+                let resultElements = document.querySelectorAll('.js-result-list');
+                resultElements.forEach(el => {
+                    el.innerHTML = '';
+                    el.classList.add('hidden');
+                });
             })
         })
     }
