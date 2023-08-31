@@ -20,7 +20,9 @@ class PopulateService extends Controller
     public function populate(string $fileName = '', string $locale = null)
     {
         $pageIndexFileName = $this->populatePageData($fileName, $locale);
-        $this->extend('populateAdditionalData', $pageIndexFileName, $locale);
+        $count = 0;
+        $this->extend('populateAdditionalData', $pageIndexFileName, $locale, $count);
+        $this->log('Additional Data populated: ' . $count  . "\n");
 
         if(SearchConfig::isElementalEnabled()) {
             $this->populateElementData($fileName, $locale);
@@ -33,10 +35,10 @@ class PopulateService extends Controller
 
         if(!$fileName) $fileName = SearchService::getIndexFile('index');
         else $fileName = SearchService::getIndexFile($fileName);
-        self::log('Data Entities (Pages): ' . count($data));
+        $this->log('Data Entities (Pages): ' . count($data));
         $this->writeSearchFile($data, $fileName);
 
-        self::log($fileName . "\n");
+        $this->log($fileName . "\n");
 
         return $fileName;
     }
@@ -46,7 +48,7 @@ class PopulateService extends Controller
      */
     private function populateElementData(string $fileName = '', $locale = null)
     {
-        self::log('ELEMENTS:');
+        $this->log('ELEMENTS:');
 
         $data = [];
         $excluded_elements = SearchConfig::getExcludedElements();
@@ -55,7 +57,7 @@ class PopulateService extends Controller
         foreach ($availableElementClasses as $class) {
             if($class !== BaseElement::class) {
                 if (!in_array($class, $excluded_elements ?? [])) {
-                    self::log($class);
+                    $this->log($class);
                     $data = array_merge($data, $this->getData($class, $locale));
                 }
             }
@@ -63,10 +65,10 @@ class PopulateService extends Controller
 
         if(!$fileName) $fileName = SearchService::getIndexFile('index-elemental');
         else $fileName = SearchService::getIndexFile($fileName . '-elemental');
-        self::log('Data Entities (Elements): ' . count($data));
+        $this->log('Data Entities (Elements): ' . count($data));
         $this->writeSearchFile($data, $fileName);
 
-        self::log($fileName . "\n");
+        $this->log($fileName . "\n");
     }
 
     public function getData($class, $locale = null)
@@ -122,7 +124,7 @@ class PopulateService extends Controller
         fclose($file);
     }
 
-    public static function log($msg)
+    public function log($msg)
     {
         echo $msg . "\n";
     }

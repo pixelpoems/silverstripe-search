@@ -32,16 +32,16 @@ class PopulateSearch extends BuildTask
         $service = PopulateService::create();
 
         if(SearchConfig::isFluentEnabled()) {
-            $service::log("##########################################");
-            $service::log("Fluent is enabled.");
-            $service::log("##########################################\n");
+            $service->log("##########################################");
+            $service->log("Fluent is enabled.");
+            $service->log("##########################################\n");
 
             $exclude_locale_from_index = SearchConfig::getExcludedLocales();
 
             if($exclude_locale_from_index) {
                 $locales = Locale::get()->exclude(['Locale' => $exclude_locale_from_index]);
-                $service::log("There are some locales excluded from indexing: \n" . implode(', ', $exclude_locale_from_index));
-                $service::log("##########################################\n");
+                $service->log("There are some locales excluded from indexing: \n" . implode(', ', $exclude_locale_from_index));
+                $service->log("##########################################\n");
 
             } else {
                 $locales = Locale::get();
@@ -50,18 +50,18 @@ class PopulateSearch extends BuildTask
             foreach ($locales as $locale) {
                 FluentState::singleton()->withState(function(FluentState $state) use ($locale) {
                     $state->setLocale($locale->Locale);
-                    $service::log('START POPULATING: ' . $locale . "\n");
+                    $service->log('START POPULATING: ' . $locale . "\n");
                     $service->populate($locale->Locale, $locale->Locale);
-                    $service::log($locale . ': SUCCESS' . "\n");
+                    $service->log($locale . ': SUCCESS' . "\n");
                 });
             }
         } else {
-            $service::log("START POPULATING\n");
+            $service->log("START POPULATING\n");
             $service->populate();
-            $service::log('SUCCESS' . "\n");
+            $service->log('SUCCESS' . "\n");
         }
 
-        $service::log("##########################################\n");
-        $service::log('Successfully written search index!');
+        $service->log("##########################################\n");
+        $service->log('Successfully written search index!');
     }
 }
