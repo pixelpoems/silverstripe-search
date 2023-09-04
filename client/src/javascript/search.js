@@ -64,7 +64,6 @@ async function handleSearch(searchValue, searchBar, loader) {
 
         // Update Read More Link with search Value
         let readMoreLink = document.querySelector('a.search-result__more');
-        console.log(readMoreLink);
         if(readMoreLink) readMoreLink.search = `?value=${searchValue}`;
 
         if(loader) loader.classList.add('hidden');
