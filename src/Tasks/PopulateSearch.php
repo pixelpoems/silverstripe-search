@@ -48,7 +48,7 @@ class PopulateSearch extends BuildTask
             }
 
             foreach ($locales as $locale) {
-                FluentState::singleton()->withState(function(FluentState $state) use ($locale) {
+                FluentState::singleton()->withState(function(FluentState $state) use ($locale, $service) {
                     $state->setLocale($locale->Locale);
                     $service->log('START POPULATING: ' . $locale . "\n");
                     $service->populate($locale->Locale, $locale->Locale);

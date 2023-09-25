@@ -23,14 +23,13 @@ class PopulateService extends Controller
         $additionalData = [];
         $this->extend('populateAdditionalData', $pageIndexFileName, $locale, $additionalData);
         $this->log('Additional Data populated: ' . count($additionalData)  . "\n");
-        $this->writeSearchFile($additionalData, $pageIndexFileName);
-
-
+        $this->writeSearchFile(array_merge($pageData, $additionalData), $pageIndexFileName);
+        $this->log($fileName . "\n");
+        
         if(SearchConfig::isElementalEnabled()) {
             $this->populateElementData($fileName, $locale);
         }
     }
-
     private function populatePageData(string $fileName = '', $locale = null)
     {
         $data = $this->getData(Page::class, $locale);
@@ -38,9 +37,6 @@ class PopulateService extends Controller
         if(!$fileName) $fileName = SearchService::getIndexFile('index');
         else $fileName = SearchService::getIndexFile($fileName);
         $this->log('Data Entities (Pages): ' . count($data));
-        $this->writeSearchFile($data, $fileName);
-
-        $this->log($fileName . "\n");
 
         return [$fileName, $data];
     }
