@@ -20,9 +20,9 @@ specified documentation below.
 
 ## Requirements
 
-* Silverstripe CMS ^4.0
-* Silverstripe Framework ^4.0
-* Versioned Admin ^1.0
+* Silverstripe CMS >=4.0
+* Silverstripe Framework >=4.0
+* Versioned Admin >=1.0
 
 ## Installation
 
