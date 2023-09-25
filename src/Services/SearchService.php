@@ -29,6 +29,7 @@ class SearchService extends Controller
 
         $src = $this->getSearchIndex();
 
+        if(!SearchConfig::getSearchKeys() || !$src) return $list;
         foreach (SearchConfig::getSearchKeys() as $key) {
             foreach ($src as $item) {
                 if (isset($item->class) && preg_match("/" . $this->value . "/i", $item->$key)) {
