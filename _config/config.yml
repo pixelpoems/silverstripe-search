@@ -2,6 +2,10 @@
 Name: silverstripe-search
 ---
 
+SilverStripe\CMS\Controllers\ContentController:
+  extensions:
+    - Pixelpoems\Search\Extensions\SearchInitExtension
+
 Page:
   extensions:
     - Pixelpoems\Search\Extensions\SearchIndexExtension

@@ -1,7 +1,7 @@
 <% if $ClassName != 'Pixelpoems\Search\Pages\SearchPage' %>
     <% require javascript("pixelpoems/silverstripe-search:client/dist/javascript/search.min.js") %>
     <% require javascript("pixelpoems/silverstripe-search:client/dist/javascript/inline-search.min.js") %>
-    <% require css("pixelpoems/silverstripe-search:client/dist/css/search.min.css") %>
+    <% require css("pixelpoems/silverstripe-search:client/dist/css/search.min.css" , "") %>
 
     <div class="search-holder search-holder__inline">
         <div class="search-input-container" role="search">

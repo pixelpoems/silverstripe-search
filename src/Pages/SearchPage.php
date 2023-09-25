@@ -22,11 +22,6 @@ class SearchPage extends \Page
         'ShowInSearch' => false
     ];
 
-    public function getControllerName()
-    {
-        return SearchPageController::class;
-    }
-
     public static function find_link($urlSegment = false)
     {
         $page = self::get_if_search_page_exists();

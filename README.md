@@ -319,6 +319,7 @@ Every config can be made via the `Pixelpoems\Search\Services\SearchConfig` class
 
 | Name                        | Default     |
 |-----------------------------|-------------|
+| enable_default_style        | `true`      |
 | index_keys                  | `['title']` |
 | enable_fluent               | `false`     |
 | exclude_locale_from_index   | `[]`        |
@@ -332,6 +333,7 @@ Name: my-search-config
 ---
 
 Pixelpoems\Search\Services\SearchConfig:
+  enable_default_style: false # Disables default styles
   index_keys:
     - title
     - content
