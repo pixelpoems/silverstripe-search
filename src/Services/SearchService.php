@@ -28,6 +28,7 @@ class SearchService extends Controller
         $list = ArrayList::create();
 
         $src = $this->getSearchIndex();
+        if(!$src) return $list;
 
         if(!SearchConfig::getSearchKeys() || !$src) return $list;
         foreach (SearchConfig::getSearchKeys() as $key) {
