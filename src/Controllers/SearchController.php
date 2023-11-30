@@ -11,6 +11,7 @@ use SilverStripe\Control\HTTPRequest;
 use SilverStripe\Core\Convert;
 use SilverStripe\ORM\ArrayList;
 use SilverStripe\ORM\FieldType\DBHTMLText;
+use TractorCow\Fluent\Model\Locale;
 use TractorCow\Fluent\State\FluentState;
 
 class SearchController extends Controller
