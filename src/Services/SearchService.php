@@ -33,7 +33,7 @@ class SearchService extends Controller
         if(!SearchConfig::getSearchKeys() || !$src) return $list;
         foreach (SearchConfig::getSearchKeys() as $key) {
             foreach ($src as $item) {
-                if (isset($item->class) && preg_match("/" . $this->value . "/i", $item->$key)) {
+                if (isset($item->class) && $item->$key && preg_match("/" . $this->value . "/i", $item->$key)) {
                     $entity = DataObject::get($item->class)->byID($item->id);
 
                     // Check if Entity exists and current member can view it
