@@ -24,6 +24,7 @@ class SearchController extends Controller
         if(SearchConfig::isFluentEnabled() && $request->getVar('locale')) {
             $requestHTMLLocale = Convert::raw2sql($request->getVar('locale'));
             $locale = str_replace('-', '_', $requestHTMLLocale);
+            $locale = Locale::get()->filter('Locale:StartsWith', $locale)?->first()?->Locale ?? null;
         } else $locale = null;
 
         $value = Convert::raw2sql($request->getVar('value'));
