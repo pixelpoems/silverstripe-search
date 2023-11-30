@@ -23,6 +23,7 @@ class SearchIndexExtension extends DataExtension
             if(gettype($item) === 'array') {
                 $item = implode(' ', $item);
             }
+            if(!$item) continue;
             $update = strip_tags($item);
             $update = str_replace("&nbsp;", '', $update);
             $update = str_replace("\n", ' ', $update);
