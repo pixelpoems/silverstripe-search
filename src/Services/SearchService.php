@@ -45,6 +45,18 @@ class SearchService extends Controller
                             if($this->isInline && $list->count() >= SearchConfig::getMaxResultsInline()) break;
                         }
                     }
+                } else if (isset($item->link) && preg_match("/" . $this->value . "/i", $item->$key)) {
+                    // If there is a link given this is no DataObject just a custom item
+
+                    // Check if Entity does not already exist in list
+                    if(!array_keys($list->map()->keys(), $item->id)) {
+                        $obj = new DataObject();
+                        $obj->ID = $item->id;
+                        $obj->Title = $item->title;
+                        $obj->Content = $item->content;
+                        $obj->Link = $item->link;
+                        $list->push($obj);
+                    }
                 }
             }
             if($this->isInline && $list->count() >= SearchConfig::getMaxResultsInline()) break;
