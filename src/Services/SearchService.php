@@ -5,6 +5,7 @@ use SilverStripe\Control\Controller;
 use SilverStripe\Core\Injector\Injectable;
 use SilverStripe\ORM\ArrayList;
 use SilverStripe\ORM\DataObject;
+use SilverStripe\View\ArrayData;
 
 class SearchService extends Controller
 {
@@ -50,7 +51,7 @@ class SearchService extends Controller
 
                     // Check if Entity does not already exist in list
                     if(!array_keys($list->map()->keys(), $item->id)) {
-                        $obj = new DataObject();
+                        $obj = new ArrayData();
                         $obj->ID = $item->id;
                         $obj->Title = $item->title;
                         $obj->Content = $item->content;
