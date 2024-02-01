@@ -219,10 +219,10 @@ public function addSearchData($data)
     $data = [];
 
     foreach (DataObject::get() as $dataObject) {
-        $data[] = $dataObject->Title . ' ' $dataObject->Content;
+        $data[] = $dataObject->Title . ' '. $dataObject->Content;
     }
 
-    $data['dataObjects'] = explode(' ', $data);
+    $data['dataObjects'] = implode(' ', $data);
 
     return $data;
 }
