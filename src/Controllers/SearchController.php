@@ -11,6 +11,7 @@ use SilverStripe\Control\HTTPRequest;
 use SilverStripe\Core\Convert;
 use SilverStripe\ORM\ArrayList;
 use SilverStripe\ORM\FieldType\DBHTMLText;
+use TractorCow\Fluent\Model\Locale;
 use TractorCow\Fluent\State\FluentState;
 
 class SearchController extends Controller
@@ -24,6 +25,7 @@ class SearchController extends Controller
         if(SearchConfig::isFluentEnabled() && $request->getVar('locale')) {
             $requestHTMLLocale = Convert::raw2sql($request->getVar('locale'));
             $locale = str_replace('-', '_', $requestHTMLLocale);
+            $locale = Locale::get()->filter('Locale:StartsWith', $locale)?->first()?->Locale ?? null;
         } else $locale = null;
 
         $value = Convert::raw2sql($request->getVar('value'));

@@ -5,6 +5,7 @@ use SilverStripe\Control\Controller;
 use SilverStripe\Core\Injector\Injectable;
 use SilverStripe\ORM\ArrayList;
 use SilverStripe\ORM\DataObject;
+use SilverStripe\View\ArrayData;
 
 class SearchService extends Controller
 {
@@ -28,11 +29,12 @@ class SearchService extends Controller
         $list = ArrayList::create();
 
         $src = $this->getSearchIndex();
+        if(!$src) return $list;
 
         if(!SearchConfig::getSearchKeys() || !$src) return $list;
         foreach (SearchConfig::getSearchKeys() as $key) {
             foreach ($src as $item) {
-                if (isset($item->class) && preg_match("/" . $this->value . "/i", $item->$key)) {
+                if (isset($item->class) && $item->$key && preg_match("/" . $this->value . "/i", $item->$key)) {
                     $entity = DataObject::get($item->class)->byID($item->id);
 
                     // Check if Entity exists and current member can view it
@@ -43,6 +45,18 @@ class SearchService extends Controller
                             $list->push($entity);
                             if($this->isInline && $list->count() >= SearchConfig::getMaxResultsInline()) break;
                         }
+                    }
+                } else if (isset($item->link) && preg_match("/" . $this->value . "/i", $item->$key)) {
+                    // If there is a link given this is no DataObject just a custom item
+
+                    // Check if Entity does not already exist in list
+                    if(!array_keys($list->map()->keys(), $item->id)) {
+                        $obj = new ArrayData();
+                        $obj->ID = $item->id;
+                        $obj->Title = $item->title;
+                        $obj->Content = $item->content;
+                        $obj->Link = $item->link;
+                        $list->push($obj);
                     }
                 }
             }

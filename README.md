@@ -155,6 +155,22 @@ Your Data will be saved within `index.json` or `locale.json`
 
 ATTENTION: Make sure your DataObject has a Link function, so that it can be linked within the search result.
 
+If you want to populate custom data without an DataObject you can add a "link" key to your custom array:
+```php
+public function populateAdditionalData($pageIndexFileName, $locale, &$additionalData)
+{
+    $additionalData[] = [
+        'title' => 'Title',
+        'id' => 123456789, # Make sure to add an identifier here
+        'content' => 'Content',
+        'link' => '/link-to-your-site',
+    ];
+
+    $this->owner->log($pageIndexFileName . "\n");
+}
+```
+This will generate a custom Array Data with your context - in the ideal case the array contains the keys `id`, `link` and your defined `index_keys`.
+
 ## Overwrite Template Files
 
 To overwrite the default search templates you can create a `Pixelpoems/Search` folder within your project templates.
@@ -203,10 +219,10 @@ public function addSearchData($data)
     $data = [];
 
     foreach (DataObject::get() as $dataObject) {
-        $data[] = $dataObject->Title . ' ' $dataObject->Content;
+        $data[] = $dataObject->Title . ' '. $dataObject->Content;
     }
 
-    $data['dataObjects'] = explode(' ', $data);
+    $data['dataObjects'] = implode(' ', $data);
 
     return $data;
 }
