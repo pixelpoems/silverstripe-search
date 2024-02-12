@@ -25,7 +25,7 @@ class PopulateService extends Controller
         $this->log('Additional Data populated: ' . count($additionalData)  . "\n");
         $this->writeSearchFile(array_merge($pageData, $additionalData), $pageIndexFileName);
         $this->log($fileName . "\n");
-        
+
         if(SearchConfig::isElementalEnabled()) {
             $this->populateElementData($fileName, $locale);
         }
@@ -97,13 +97,14 @@ class PopulateService extends Controller
                 $data[] = $this->getSearchIndexOfDataObject($class, $object->ID);
             }
         }
-        return $data;
+        return array_filter($data);
     }
 
     private function getSearchIndexOfDataObject($class, $objectID)
     {
         $object = DataObject::get_by_id($class, $objectID);
         if(!$object) return;
+        if(!$object->getSearchIndexData()) return;
         return $object->getSearchIndexData();
     }
 
