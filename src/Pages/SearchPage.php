@@ -28,12 +28,18 @@ class SearchPage extends \Page
         if (!$page) return null;
         return ($urlSegment) ? $page->URLSegment : $page->Link();
     }
-
+    
     protected static function get_if_search_page_exists()
     {
-        if ($page = DataObject::get_one(self::class)) {
-            return $page;
+        if(class_exists(\Symbiote\Multisites\Multisites::class)) {
+            // Return the first search page found in the current subsite
+            if ($page = DataObject::get_one(self::class, ['SiteID' => Multisites::inst()->getCurrentSiteID()])) return $page;
+
+        } else {
+            // Return the first search page found
+            if ($page = DataObject::get_one(self::class)) return $page;
         }
+
         return null;
     }
 }
