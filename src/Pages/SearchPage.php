@@ -4,6 +4,7 @@ namespace Pixelpoems\Search\Pages;
 
 use Pixelpoems\Search\Controllers\SearchPageController;
 use SilverStripe\ORM\DataObject;
+use Symbiote\Multisites\Multisites;
 
 class SearchPage extends \Page
 {
@@ -31,7 +32,7 @@ class SearchPage extends \Page
     
     protected static function get_if_search_page_exists()
     {
-        if(class_exists(\Symbiote\Multisites\Multisites::class)) {
+        if(class_exists(Multisites::class)) {
             // Return the first search page found in the current subsite
             if ($page = DataObject::get_one(self::class, ['SiteID' => Multisites::inst()->getCurrentSiteID()])) return $page;
 
