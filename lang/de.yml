@@ -6,3 +6,5 @@ de:
     Matches: 'Treffer'
     NoResults: 'Leider konnte nichts gefunden werden'
     MoreResults: 'weitere Ergebnisse'
+    SpecifySearch: 'Bitte spezifizieren Sie Ihren Suchbegriff'
+
