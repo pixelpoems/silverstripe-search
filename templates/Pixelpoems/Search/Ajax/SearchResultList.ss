@@ -5,7 +5,9 @@
                 <%t Pixelpoems\Search\Pages\SearchPage.Matches 'Matches' %>: $List.Count
             <% end_if %>
         <% else %>
-            <%t Pixelpoems\Search\Pages\SearchPage.Matches 'Matches' %>: $List.Count
+            <%t Pixelpoems\Search\Pages\SearchPage.Matches 'Matches' %>: $List.Count <% if $List.Count == 50 %>
+                <%t Pixelpoems\Search\Pages\SearchPage.SpecifySearch 'SpecifySearch' %>
+            <% end_if %>
         <% end_if %>
     </span>
 
