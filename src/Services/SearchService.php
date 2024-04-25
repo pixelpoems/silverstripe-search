@@ -59,6 +59,7 @@ class SearchService extends Controller
                         $list->push($obj);
                     }
                 }
+                if($list->count() > 50) break; // To prevent too many results
             }
             if($this->isInline && $list->count() >= SearchConfig::getMaxResultsInline()) break;
         };
