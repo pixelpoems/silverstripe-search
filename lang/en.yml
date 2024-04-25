@@ -6,3 +6,4 @@ en:
     Matches: 'Matches'
     NoResults: 'Sorry, but nothing matched your search'
     MoreResults: 'more results'
+    SpecifySearch: 'Please specify your search term'
