@@ -3,6 +3,7 @@
 namespace Pixelpoems\Search\Extensions;
 
 use Pixelpoems\Search\Services\SearchConfig;
+use Pixelpoems\Search\Services\SearchService;
 use SilverStripe\ORM\DataExtension;
 
 class SearchIndexExtension extends DataExtension
@@ -24,11 +25,7 @@ class SearchIndexExtension extends DataExtension
                 $item = implode(' ', $item);
             }
             if(!$item) continue;
-            $update = strip_tags($item);
-            $update = str_replace("&nbsp;", '', $update);
-            $update = str_replace("\n", ' ', $update);
-            $update = str_replace("\/", ' ', $update);
-            $data[$key] = $update;
+            $data[$key] = SearchService::escapeHTML($item);
         }
 
         $data['id'] = $this->owner->ID;

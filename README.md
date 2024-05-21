@@ -116,6 +116,8 @@ public function addSearchData($data)
 }
 ```
 
+You can use the `SearchService::escapeHTML($string)` function to escape your content before adding it to the index.
+
 ## Populate Task
 
 To create or update the search index use the "Search Populate" Task:

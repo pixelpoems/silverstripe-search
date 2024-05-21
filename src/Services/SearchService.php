@@ -24,6 +24,20 @@ class SearchService extends Controller
         // Defined in Config
         $this->isInline = $isInline;
     }
+
+    /**
+     * Escape HTML from string to prevent errors
+     * @param string $string
+     * @return string
+     */
+    public static function escapeHTML(string $string): string
+    {
+        $update = strip_tags($string);
+        $update = str_replace("&nbsp;", '', $update);
+        $update = str_replace("\n", ' ', $update);
+        return str_replace("\/", ' ', $update);
+    }
+
     public function getSearchResult()
     {
         $list = ArrayList::create();
