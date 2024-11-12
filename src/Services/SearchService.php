@@ -48,6 +48,9 @@ class SearchService extends Controller
         if(!SearchConfig::getSearchKeys() || !$src) return $list;
         foreach (SearchConfig::getSearchKeys() as $key) {
             foreach ($src as $item) {
+                if(is_array($item->$key)) { // Prevent Error on wrong creation of object
+                   continue;
+                }
                 if (isset($item->class) && $item->$key && preg_match("/" . $this->value . "/i", $item->$key)) {
                     $entity = DataObject::get($item->class)->byID($item->id);
 
