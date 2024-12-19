@@ -51,10 +51,13 @@ class SearchController extends Controller
 
     private function generateResponse($locale, $list, $isInline = false)
     {
+        $searchPageLink = SearchPage::find_link();
+        if($searchPageLink) $searchPageLink = Director::absoluteURL($searchPageLink)
+        
         $data = [
             'List' => $list,
             'IsInline' => $isInline,
-            'SearchPageLink' => Director::absoluteURL(SearchPage::find_link())
+            'SearchPageLink' => $searchPageLink
         ];
 
         $this->extend('updateAjaxTemplateData', $data);
