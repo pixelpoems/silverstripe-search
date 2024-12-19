@@ -52,7 +52,7 @@ class SearchController extends Controller
     private function generateResponse($locale, $list, $isInline = false)
     {
         $searchPageLink = SearchPage::find_link();
-        if($searchPageLink) $searchPageLink = Director::absoluteURL($searchPageLink)
+        if($searchPageLink) $searchPageLink = Director::absoluteURL($searchPageLink);
         
         $data = [
             'List' => $list,
