@@ -144,6 +144,10 @@ public function populateAdditionalData($pageIndexFileName, $locale, &$additional
     $dataObjects = ClassInfo::subclassesFor(DataObject::class);
     foreach ($dataObjects as $dataObject) {
         $additionalData = $this->owner->getData($dataObject, $locale);
+
+        // If you want to add some additional Filters to the request you can do it like this
+        // $additionalData = $this->owner->getData($dataObject, $locale, ['isActive' => true]);
+
         $this->owner->log('Data Entities (DataObject / '. $dataObject . '): ' . count($additionalData));
 
         // Add your additional data to the given array to return this data!
