@@ -69,12 +69,16 @@ class PopulateService extends Controller
         $this->log($fileName . "\n");
     }
 
-    public function getData($class, $locale = null)
+    public function getData($class, $locale = null, $filter = [])
     {
         $objects = Versioned::get_by_stage($class, 'Live');
 
         if($class === Page::class) {
             $objects = $objects->filter(['ShowInSearch' => true]);
+        }
+
+        if($filter) {
+            $objects = $objects->filter($filter);
         }
 
         $data = [];
