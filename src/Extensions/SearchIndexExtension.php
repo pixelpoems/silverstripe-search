@@ -28,10 +28,7 @@ class SearchIndexExtension extends DataExtension
             $data[$key] = SearchService::escapeHTML($item);
         }
 
-        // Make sure there is an int id given
-        if(!isset($data['id'])) $data['id'] = (int)$this->owner->ID;
-        else $data['id'] = (int)$data['id'];
-        
+        $data['id'] = $this->owner->ID;
         $data['class'] = $this->owner->ClassName;
         return $data;
     }
