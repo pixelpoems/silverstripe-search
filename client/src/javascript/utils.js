@@ -1,14 +1,21 @@
-export function downloadUrl(url, callback) {
-    let request = window.ActiveXObject ? new ActiveXObject('Microsoft.XMLHTTP') : new XMLHttpRequest;
+let currentRequest = null; // Global variable to store the ongoing request
 
-    request.onreadystatechange = function () {
-        if (request.readyState === 4) {
-            request.onreadystatechange = () => {}; // Do nothing
-            callback(request.responseText, request.status);
+export function downloadUrl(url, callback) {
+    // If there's an ongoing request, abort it
+    if (currentRequest) {
+        currentRequest.abort();
+    }
+
+    // Create a new request
+    currentRequest = window.ActiveXObject ? new ActiveXObject('Microsoft.XMLHTTP') : new XMLHttpRequest;
+
+    currentRequest.onreadystatechange = function () {
+        if (currentRequest.readyState === 4) {
+            currentRequest.onreadystatechange = () => {}; // Do nothing
+            callback(currentRequest.responseText, currentRequest.status);
         }
     };
 
-    request.open('POST', url, true);
-    request.send();
-
+    currentRequest.open('POST', url, true);
+    currentRequest.send();
 }
