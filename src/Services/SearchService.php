@@ -51,24 +51,42 @@ class SearchService extends Controller
                 if(is_array($item->$key)) { // Prevent Error on wrong creation of object
                    continue;
                 }
-                if (isset($item->class) && $item->$key && preg_match("/" . $this->value . "/i", $item->$key)) {
+
+                if ($this->value && $item->$key) {
+                    $search = preg_quote(trim($this->value), '/');
+                    $text = preg_replace('/\s+/', ' ', $item->$key); // Normalize spaces
+
+                    $pregMatch = preg_match("/$search/i", $text);
+                } else {
+                    $pregMatch = false;
+                }
+
+
+                if (($this->value && $item->$key) && isset($item->class) && $pregMatch) {
                     $entity = DataObject::get($item->class)->byID($item->id);
 
                     // Check if Entity exists and current member can view it
-                    if ($entity && $entity->canView()) {
+                    if ($entity) {
 
+                        $canView = $entity->hasMethod('canView') ? $entity->canView() : true;
+                        if (!$canView) continue;
+
+                        $entity->UniqueID = $item->class . '--' . $item->id;
                         // Check if Entity does not already exist in list
-                        if(!array_keys($list->map()->keys(), $entity->ID)) {
+                        $existingIDs = $list->map('UniqueID', 'UniqueID')->toArray();
+                        if (!in_array($entity->UniqueID, $existingIDs)) {
                             $list->push($entity);
-                            if($this->isInline && $list->count() >= SearchConfig::getMaxResultsInline()) break;
+                            if ($this->isInline && $list->count() >= SearchConfig::getMaxResultsInline()) break;
                         }
                     }
-                } else if (isset($item->link) && preg_match("/" . $this->value . "/i", $item->$key)) {
+                } else if (($this->value && $item->$key) && isset($item->link) && $pregMatch) {
                     // If there is a link given this is no DataObject just a custom item
 
                     // Check if Entity does not already exist in list
-                    if(!array_keys($list->map()->keys(), $item->id)) {
+                    $existingIDs = $list->map('UniqueID', 'UniqueID')->toArray();
+                    if (!in_array("$item->class--$item->id", $existingIDs)) {
                         $obj = new ArrayData();
+                        $obj->UniqueID = $item->class . '--' . $item->id;
                         $obj->ID = $item->id;
                         $obj->Title = $item->title;
                         $obj->Content = $item->content;
@@ -76,6 +94,7 @@ class SearchService extends Controller
                         $list->push($obj);
                     }
                 }
+
                 if($list->count() > 50) break; // To prevent too many results
             }
             if($this->isInline && $list->count() >= SearchConfig::getMaxResultsInline()) break;
