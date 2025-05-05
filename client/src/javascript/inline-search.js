@@ -9,13 +9,18 @@ document.addEventListener("DOMContentLoaded", () => {
                     let searchInput = search.querySelector('.search-input');
                     if(!searchInput) return;
                     search.classList.add('active');
+                    searchInput.setAttribute('tabindex', '0');
                     searchInput.focus();
 
                     let closeBtn = search.querySelector('.btn__close');
                     if(closeBtn) {
+                        closeBtn.setAttribute('tabindex', '0');
+
                         closeBtn.addEventListener('click', () => {
                             search.classList.remove('active');
                             openBtn.style.display = 'inline-block';
+                            searchInput.setAttribute('tabindex', '-1');
+                            closeBtn.setAttribute('tabindex', '-1');
                         })
                     }
                 })
