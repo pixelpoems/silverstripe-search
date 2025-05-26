@@ -24,6 +24,8 @@ specified documentation below.
 * Silverstripe Framework >=4.0
 * Versioned Admin >=1.0
 
+=> not tested with CMS 5 yet
+
 ## Installation
 
 ```
