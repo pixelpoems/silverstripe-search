@@ -2,11 +2,11 @@
 
 namespace Pixelpoems\Search\Extensions;
 
+use SilverStripe\Core\Extension;
 use Pixelpoems\Search\Services\SearchConfig;
 use Pixelpoems\Search\Services\SearchService;
-use SilverStripe\ORM\DataExtension;
 
-class SearchIndexExtension extends DataExtension
+class SearchIndexExtension extends Extension
 {
     public function getSearchIndexData()
     {
@@ -24,7 +24,11 @@ class SearchIndexExtension extends DataExtension
             if(gettype($item) === 'array') {
                 $item = implode(' ', $item);
             }
-            if(!$item) continue;
+
+            if (!$item) {
+                continue;
+            }
+
             $data[$key] = SearchService::escapeHTML($item);
         }
 

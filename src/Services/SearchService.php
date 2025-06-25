@@ -1,28 +1,22 @@
 <?php
 namespace Pixelpoems\Search\Services;
 
+use SilverStripe\Model\List\ArrayList;
+use SilverStripe\Model\ArrayData;
 use SilverStripe\Control\Controller;
 use SilverStripe\Core\Injector\Injectable;
-use SilverStripe\ORM\ArrayList;
 use SilverStripe\ORM\DataObject;
-use SilverStripe\View\ArrayData;
 
 class SearchService extends Controller
 {
     use Injectable;
+    private string $locale = '';
 
-    private bool $isInline;
-    private string $locale;
-    private string $value;
-
-    public function __construct($value = '', $locale = '', $isInline = false)
+    public function __construct(private string $value = '', $locale = '', private bool $isInline = false)
     {
-        $this->value = $value;
-        if($locale) $this->locale = $locale;
-
-        // If isInline return max results
-        // Defined in Config
-        $this->isInline = $isInline;
+        if ($locale) {
+            $this->locale = $locale;
+        }
     }
 
     /**
@@ -43,9 +37,13 @@ class SearchService extends Controller
         $list = ArrayList::create();
 
         $src = $this->getSearchIndex();
-        if(!$src) return $list;
+        if (!$src) {
+            return $list;
+        }
+        if (!SearchConfig::getSearchKeys() || !$src) {
+            return $list;
+        }
 
-        if(!SearchConfig::getSearchKeys() || !$src) return $list;
         foreach (SearchConfig::getSearchKeys() as $key) {
             foreach ($src as $item) {
                 if(is_array($item->$key)) { // Prevent Error on wrong creation of object
@@ -54,9 +52,9 @@ class SearchService extends Controller
 
                 if ($this->value && $item->$key) {
                     $search = preg_quote(trim($this->value), '/');
-                    $text = preg_replace('/\s+/', ' ', $item->$key); // Normalize spaces
+                    $text = preg_replace('/\s+/', ' ', (string) $item->$key); // Normalize spaces
 
-                    $pregMatch = preg_match("/$search/i", $text);
+                    $pregMatch = preg_match(sprintf('/%s/i', $search), (string) $text);
                 } else {
                     $pregMatch = false;
                 }
@@ -64,27 +62,29 @@ class SearchService extends Controller
 
                 if (($this->value && $item->$key) && isset($item->class) && $pregMatch) {
                     $entity = DataObject::get($item->class)->byID($item->id);
-
                     // Check if Entity exists and current member can view it
                     if ($entity) {
 
                         $canView = $entity->hasMethod('canView') ? $entity->canView() : true;
-                        if (!$canView) continue;
+                        if (!$canView) {
+                            continue;
+                        }
 
                         $entity->UniqueID = $item->class . '--' . $item->id;
                         // Check if Entity does not already exist in list
                         $existingIDs = $list->map('UniqueID', 'UniqueID')->toArray();
                         if (!in_array($entity->UniqueID, $existingIDs)) {
                             $list->push($entity);
-                            if ($this->isInline && $list->count() >= SearchConfig::getMaxResultsInline()) break;
+                            if ($this->isInline && $list->count() >= SearchConfig::getMaxResultsInline()) {
+                                break;
+                            }
                         }
                     }
-                } else if (($this->value && $item->$key) && isset($item->link) && $pregMatch) {
+                } elseif (($this->value && $item->$key) && isset($item->link) && $pregMatch) {
                     // If there is a link given this is no DataObject just a custom item
-
                     // Check if Entity does not already exist in list
                     $existingIDs = $list->map('UniqueID', 'UniqueID')->toArray();
-                    if (!in_array("$item->class--$item->id", $existingIDs)) {
+                    if (!in_array(sprintf('%s--%s', $item->class, $item->id), $existingIDs)) {
                         $obj = new ArrayData();
                         $obj->UniqueID = $item->class . '--' . $item->id;
                         $obj->ID = $item->id;
@@ -95,9 +95,14 @@ class SearchService extends Controller
                     }
                 }
 
-                if($list->count() > 50) break; // To prevent too many results
+                if ($list->count() > 50) {
+                    break;
+                } // To prevent too many results
             }
-            if($this->isInline && $list->count() >= SearchConfig::getMaxResultsInline()) break;
+
+            if ($this->isInline && $list->count() >= SearchConfig::getMaxResultsInline()) {
+                break;
+            }
         };
 
         $this->extend('updateSearchResultBeforeLimit', $list);
@@ -115,7 +120,10 @@ class SearchService extends Controller
     {
         $name = 'index';
 
-        if(SearchConfig::isFluentEnabled()) {
+        if(SearchConfig::isFluentEnabled() && $this->locale) {
+            if(!$this->locale) {
+                $this->locale = SearchConfig::getDefaultLocale();
+            }
             // Change name to locale if fluent is enabled
             $name = $this->locale;
         }
@@ -124,7 +132,7 @@ class SearchService extends Controller
 
         // Check if file exists
         if(!file_exists($fileName)) {
-            return;
+            return null;
         }
 
         $index = file_get_contents($fileName, '');
@@ -146,7 +154,10 @@ class SearchService extends Controller
 
     public static function getIndexFile($name = null)
     {
-        if($name) return self::getIndexPath() . $name . '.json';
+        if ($name) {
+            return self::getIndexPath() . $name . '.json';
+        }
+
         return self::getIndexPath();
     }
 }

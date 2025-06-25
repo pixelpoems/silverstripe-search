@@ -9,8 +9,6 @@ use SilverStripe\Control\Controller;
 use SilverStripe\Control\Director;
 use SilverStripe\Control\HTTPRequest;
 use SilverStripe\Core\Convert;
-use SilverStripe\ORM\ArrayList;
-use SilverStripe\ORM\FieldType\DBHTMLText;
 use TractorCow\Fluent\Model\Locale;
 use TractorCow\Fluent\State\FluentState;
 
@@ -23,7 +21,7 @@ class SearchController extends Controller
     public function result(HTTPRequest $request)
     {
         if(SearchConfig::isFluentEnabled()) {
-        
+
             if($request->getVar('locale')) {
                 $requestHTMLLocale = Convert::raw2sql($request->getVar('locale'));
                 $locale = str_replace('-', '_', $requestHTMLLocale);
@@ -31,7 +29,9 @@ class SearchController extends Controller
             } else {
                 $locale = FluentState::singleton()->getLocale();
             }
-        } else $locale = null;
+        } else {
+            $locale = null;
+        }
 
         $value = Convert::raw2sql($request->getVar('value'));
         $isInline = Convert::raw2sql($request->getVar('inline')) === 'true';
@@ -57,15 +57,19 @@ class SearchController extends Controller
     private function generateResponse($locale, $list, $isInline = false)
     {
         $searchPageLink = SearchPage::find_link();
-        if($searchPageLink) $searchPageLink = Director::absoluteURL($searchPageLink);
-        
+
         $data = [
-            'List' => $list,
+            'ResultList' => $list,
             'IsInline' => $isInline,
-            'SearchPageLink' => $searchPageLink
         ];
 
+        if ($searchPageLink) {
+            $searchPageLink = Director::absoluteURL($searchPageLink);
+            $data['SearchPageLink'] = $searchPageLink;
+        }
+
         $this->extend('updateAjaxTemplateData', $data);
+
 
         if(SearchConfig::isFluentEnabled()) {
             return FluentState::singleton()->withState(function(FluentState $state) use ($locale, $data) {

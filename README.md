@@ -20,11 +20,8 @@ specified documentation below.
 
 ## Requirements
 
-* Silverstripe CMS >=4.0
-* Silverstripe Framework >=4.0
-* Versioned Admin >=1.0
-
-=> not tested with CMS 5 yet
+* Silverstripe CMS ^6.0
+* Silverstripe Framework ^6.0
 
 ## Installation
 
