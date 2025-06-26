@@ -115,7 +115,10 @@ class SearchService extends Controller
     {
         $name = 'index';
 
-        if(SearchConfig::isFluentEnabled()) {
+        if(SearchConfig::isFluentEnabled() && $this->locale) {
+            if(!$this->locale) {
+                $this->locale = SearchConfig::getDefaultLocale();
+            }
             // Change name to locale if fluent is enabled
             $name = $this->locale;
         }
