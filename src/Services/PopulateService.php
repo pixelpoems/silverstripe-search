@@ -88,6 +88,14 @@ class PopulateService extends Controller
 
         $data = [];
         foreach($objects as $object) {
+            // Check if $Object is an Element
+            if($object instanceof BaseElement) {
+                // CHeck if the page where the element is placed is Published and ShowInSearch
+                if(!$object->ParentID || !$object->Parent()->getOwnerPage()?->isPublished() || !$object->Parent()->getOwnerPage()->ShowInSearch) {
+                    continue;
+                }
+            }
+
             if(SearchConfig::isFluentEnabled()) {
 
                 if ($object->getExtensionInstance(FluentVersionedExtension::class)) {
