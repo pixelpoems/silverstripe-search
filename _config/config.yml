@@ -9,3 +9,12 @@ SilverStripe\CMS\Controllers\ContentController:
 Page:
   extensions:
     - Pixelpoems\Search\Extensions\SearchIndexExtension
+
+PageController:
+  extensions:
+    - Pixelpoems\Search\Extensions\PageControllerExtension
+
+Pixelpoems\Search\Services\SearchConfig:
+  enable_toggle_sm: true # Enable the toggle for search in the frontend on small screens
+  enable_toggle_lg: false # Enable the toggle for search in the frontend on large screens
+  sm_lg_breakpoint: 768 # Breakpoint for the toggle visibility
