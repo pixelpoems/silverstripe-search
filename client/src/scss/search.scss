@@ -138,8 +138,14 @@
                 flex-direction: column;
                 text-overflow: ellipsis;
                 padding: var(--search-space) 0;
+                text-decoration: none;
                 .search-result__headline {
                     font-weight: 700;
+                }
+                &:hover{
+                    .search-result__headline {
+                        text-decoration: underline;
+                    }
                 }
             }
         }
