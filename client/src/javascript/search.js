@@ -25,6 +25,8 @@ document.addEventListener("DOMContentLoaded", async function (e) {
                 let lgToggle = searchBar.dataset.searchToggleLg === 'true';
                 let SMLGBreakpoint = searchBar.dataset.searchToggleBreakpoint;
 
+                console.log('smToggle: ' + smToggle);
+                console.log('lgToggle: ' + lgToggle);
                 openBtn.setAttribute('aria-hidden', 'true');
                 openBtn.disabled = true;
                 initToggle(smToggle, 'sm');

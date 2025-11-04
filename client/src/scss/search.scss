@@ -1,29 +1,30 @@
 :root {
     --search-input-w: 15rem;
-    --search-resultinline-w: 30rem;
+    --search-input-padding: 0.5rem;
+    --search-resultinline-w: 20rem;
     --search-btn-w: 24px;
     --search-space: 0.5rem;
 }
 
 .search-holder {
     position: relative;
-
     .search-input-container {
         position: relative;
         @media only screen and (min-width: 768px) {
             max-width: 50%;
         }
-
         label {
             display: flex;
             align-items: center;
-            margin-right: var(--search-space);
         }
-
-        .search-bar input[type=text] {
-            width: 100%;
-            border: 1px solid gray;
-            height: 2rem;
+        .search-bar {
+            display: flex;
+            align-items: center;   
+            input[type=text] {
+                width: 100%;
+                border: 1px solid gray;
+                padding: var(--search-input-padding);
+            }
         }
 
         .search-loader {
@@ -33,7 +34,6 @@
             top: 50%;
             display: flex;
             align-items: center;
-
             &:before {
                 content: "";
                 width: calc(0.5 * var(--search-btn-w));
@@ -65,44 +65,64 @@
         // This is the css without toggle option
         .search-input-container {
             display: flex;
-            justify-content: flex-end;
             width: auto;
             max-width: none;
-
+            label{
+                z-index: 1;
+                position: absolute;
+                left: var(--search-input-padding);
+                transform: translateY(-50%);
+                top: 50%;
+                .btn__search{
+                    pointer-events: none;
+                }
+            }
             .search-bar {
-                display: flex;
-                width: var(--search-input-w);
-
+                display: flex;                
+                input[type=text] {
+                    padding-inline-start: calc(var(--search-btn-w) + var(--search-input-padding)*2);
+                    width: var(--search-input-w);
+                }
                 .btn__close {
                     display: none;
                 }
             }
 
             .search-loader {
-                right: calc(0.5rem + var(--search-btn-w));
+                right: calc(var(--search-btn-w) * 0.5 + var(--search-input-padding));
             }
         }
+
 
         // This is the css with toggle option
         &.toggle {
             .search-input-container {
+                label{
+                    margin-right: inherit;
+                    .btn__search{
+                        pointer-events: inherit;
+                    }
+                }
                 .search-bar {
+                    width: 0px;
                     overflow: hidden;
                     transition-property: width;
                     transition-duration: .3s;
-                    width: 0;
-
+                    input[type=text] {
+                        padding-inline-start: calc(var(--search-input-padding) + var(--search-btn-w) * 1.5);
+                    }
                     .btn__close {
-                        display: unset; // Reset display for close button if the toggle option is used
-                        margin-left: calc(-1 * var(--search-btn-w));
+                        display: inline-flex;
+                        margin-left: calc(-1.1 * var(--search-btn-w));
                         color: black;
                         z-index: 1;
-
                     }
-
                     &.active {
                         width: var(--search-input-w);
                     }
+                }
+                .search-loader {
+                    right: calc(var(--search-btn-w) + var(--search-input-padding));
                 }
             }
         }
@@ -113,13 +133,11 @@
             list-style-type: none;
             padding: 0;
             margin: var(--search-space) 0;
-
             a {
                 display: flex;
                 flex-direction: column;
                 text-overflow: ellipsis;
                 padding: var(--search-space) 0;
-
                 .search-result__headline {
                     font-weight: 700;
                 }
@@ -129,23 +147,23 @@
         &__inline {
             position: absolute;
             top: 2.5rem;
-            right: 0;
+            right: auto;
+            left: 0;
             background: white;
             z-index: 100;
             width: 100%;
             min-height: 50px;
             box-shadow: rgba(100, 100, 100, .2) 0px 7px 24px 0px;
             @media only screen and (min-width: 768px) {
-                width: auto;
-                min-width: var(--search-input-w);
-                max-width: var(--search-resultinline-w);
+                width: var(--search-resultinline-w);
+                left: auto;
+                right: 0;
             }
 
             ul.search-result__list {
                 border-top: 1px solid black;
                 max-height: 50vh;
                 overflow-y: auto;
-
                 li {
                     border-bottom: 1px solid black;
                 }
@@ -190,7 +208,7 @@
 }
 
 
-// some classes, when simple them is used
+// some classes, when simple theme is used
 
 .search-holder {
     // prevent floating, when used with simple theme

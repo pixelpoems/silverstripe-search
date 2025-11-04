@@ -3,7 +3,7 @@
     <% require javascript("pixelpoems/silverstripe-search:client/dist/javascript/inline-search.min.js") %>
     <% require css("pixelpoems/silverstripe-search:client/dist/css/search.min.css" , "") %>
 
-    <div class="search-holder search-holder__inline">
+    <div class="search-holder search-holder__inline" $SearchToggleAttr>
         <div class="search-input-container" role="search">
             <label for="search">
                 <span class="sr-only"><%t Pixelpoems\Search\Pages\SearchPage.Search 'Search' %></span>

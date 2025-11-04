@@ -16,7 +16,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     if(closeBtn) {
                         closeBtn.addEventListener('click', () => {
                             search.classList.remove('active');
-                            openBtn.style.display = 'inline-block';
+                            openBtn.style.display = 'inline-flex';
                         })
                     }
                 })
