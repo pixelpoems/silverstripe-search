@@ -3,7 +3,7 @@
     <% require javascript("pixelpoems/silverstripe-search:client/dist/javascript/inline-search.min.js") %>
     <% require css("pixelpoems/silverstripe-search:client/dist/css/search.min.css" , "") %>
 
-    <div class="search-holder search-holder__inline">
+    <div class="search-holder search-holder__inline" $SearchToggleAttr>
         <div class="search-input-container" role="search">
             <label for="search">
                 <span class="sr-only"><%t Pixelpoems\Search\Pages\SearchPage.Search 'Search' %></span>
@@ -12,9 +12,9 @@
                 </button>
             </label>
             <div class="search-bar">
-                <input class="search-input" id="search" type="text" tabindex="-1" placeholder="<%t Pixelpoems\Search\Pages\SearchPage.Search 'Search' %>"/>
+                <input class="search-input" id="search" type="text" placeholder="<%t Pixelpoems\Search\Pages\SearchPage.Search 'Search' %>"/>
                 <span class="search-loader hidden"></span>
-                <button class="btn btn__close" tabindex="-1" aria-label="Close Search">
+                <button class="btn btn__close" aria-label="Close Search">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                 </button>
             </div>
