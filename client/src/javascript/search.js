@@ -25,8 +25,6 @@ document.addEventListener("DOMContentLoaded", async function (e) {
                 let lgToggle = searchBar.dataset.searchToggleLg === 'true';
                 let SMLGBreakpoint = searchBar.dataset.searchToggleBreakpoint;
 
-                console.log('smToggle: ' + smToggle);
-                console.log('lgToggle: ' + lgToggle);
                 openBtn.setAttribute('aria-hidden', 'true');
                 openBtn.disabled = true;
                 initToggle(smToggle, 'sm');
@@ -44,7 +42,6 @@ document.addEventListener("DOMContentLoaded", async function (e) {
 
                 // Add resize listener to handle toggles
                 window.addEventListener('resize', function (e) {
-                    console.log(window.innerWidth);
                     // On resize, reset and re-init toggles
                     searchBar.classList.remove('toggle');
                     openBtn.disabled = true;
@@ -58,7 +55,6 @@ document.addEventListener("DOMContentLoaded", async function (e) {
 
                     if (toggle) {
                         if (toggleWidth === 'sm' && window.innerWidth < parseInt(SMLGBreakpoint)) {
-                            console.log('SM toggle is active and should be shown')
                             // SM toggle is active and should be shown
                             searchBar.classList.add('toggle');
                             openBtn.setAttribute('aria-hidden', 'false');
@@ -66,7 +62,6 @@ document.addEventListener("DOMContentLoaded", async function (e) {
                         }
 
                         if (toggleWidth === 'lg' && window.innerWidth >= parseInt(SMLGBreakpoint)) {
-                            console.log('LG toggle is active and should be shown')
                             // LG toggle is active and should be shown
                             searchBar.classList.add('toggle');
                             openBtn.setAttribute('aria-hidden', 'false');
