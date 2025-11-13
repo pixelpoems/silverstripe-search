@@ -1,0 +1,9 @@
+ro:
+  Pixelpoems\Search\Pages\SearchPage:
+    SINGULARNAME: 'Pagină de căutare'
+    PLURALNAME: 'Pagini de căutare'
+    Search: 'Căutare'
+    Matches: 'Rezultate'
+    NoResults: 'Ne pare rău, nimic nu se potrivește cu căutarea dvs.'
+    MoreResults: 'mai multe rezultate'
+    SpecifySearch: 'Vă rugăm să specificați termenul de căutare'

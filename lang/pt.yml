@@ -1,0 +1,9 @@
+pt:
+  Pixelpoems\Search\Pages\SearchPage:
+    SINGULARNAME: 'Página de pesquisa'
+    PLURALNAME: 'Páginas de pesquisa'
+    Search: 'Pesquisar'
+    Matches: 'Resultados'
+    NoResults: 'Desculpe, nada corresponde à sua pesquisa'
+    MoreResults: 'mais resultados'
+    SpecifySearch: 'Por favor, especifique o termo de pesquisa'

@@ -1,0 +1,9 @@
+nl:
+  Pixelpoems\Search\Pages\SearchPage:
+    SINGULARNAME: 'Zoekpagina'
+    PLURALNAME: "Zoekpagina's"
+    Search: 'Zoeken'
+    Matches: 'Resultaten'
+    NoResults: 'Sorry, er zijn geen resultaten gevonden'
+    MoreResults: 'meer resultaten'
+    SpecifySearch: 'Geef een zoekterm op'
