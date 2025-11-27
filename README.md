@@ -7,19 +7,30 @@ You can use it in combination with Silverstripe [Elemental](https://github.com/s
 and [Fluent](https://github.com/tractorcow-farm/silverstripe-fluent). For Elemental and Fluent configuration check the
 specified documentation below.
 
+## Table of Contents
+
 * [Requirements](#requirements)
 * [Installation](#installation)
+* [Usage](#usage)
+  * [Inline Search](#inline-search)
+  * [Search Page](#search-page)
 * [Configuration](#configuration)
-* [Populate Task](#populate-task)
-* [Overwrite Template Files](#overwrite-template-files)
-* [Inline Search](#inline-search)
-* [Enable Search on DataObjects](#enable-search-on-dataobjects)
-* [Config to enable Elemental](#config-to-enable-elemental)
-* [Config to enable Fluent](#config-to-enable-fluent)
-* [Available Config Variables](#available-config-variables)
+  * [Basic Configuration](#basic-configuration)
+  * [Available Config Variables](#available-config-variables)
+  * [Customizing Index Data](#customizing-index-data)
+  * [Populate Task](#populate-task)
+* [Advanced Configuration](#advanced-configuration)
+  * [Enable Search on DataObjects](#enable-search-on-dataobjects)
+  * [Elemental Integration](#elemental-integration)
+  * [Fluent Integration](#fluent-integration)
+  * [Toggle Configuration for Inline Search](#toggle-configuration-for-inline-search)
+* [Customization](#customization)
+  * [Overwrite Template Files](#overwrite-template-files)
+  * [Modify Search Results](#modify-search-results)
+* [Reporting Issues](#reporting-issues)
+* [Credits](#credits)
 
 ## Requirements
-
 * Silverstripe CMS ^6.0
 * Silverstripe Framework ^6.0
 
@@ -29,36 +40,98 @@ specified documentation below.
 composer require pixelpoems/silverstripe-search
 ```
 
-This module includes
+This module includes:
 
 * `Populate Search Task` - Task to create or update the search index
 * `Search Page` - Separate Search Page
 * `Inline Search` - Template Include
 
+---
+
+## Usage
+
+### Inline Search
+
+This module includes an inline search. The listing within the inline search will display up to ten search results and
+a "See more..." item which navigates to the search page which will display all search results in a list.
+
+Include the InlineSearch Template within your template:
+```ss
+<% include Pixelpoems\Search\Includes\InlineSearch %>
+```
+
+### Search Page
+
+A dedicated search page is automatically created when you install this module. Users can access it to view all search results in a full-page layout.
+
+---
+
 ## Configuration
 
-Without any special configurations all pages and subclasses of page, which have the "Show in Search" Checkbox checked,
-will be indexed. For indexing you have to run the `PopulateSearch` Task (More Details: [Populate Task](#populate-task)).
+### Basic Configuration
 
-Following variables can be used to configure your search index:
+Without any special configurations, all pages and subclasses of page which have the "Show in Search" checkbox checked will be indexed. For indexing, you have to run the `PopulateSearch` Task (More details: [Populate Task](#populate-task)).
+
+The following variables can be used to configure your search index:
 
 ```yml
 Pixelpoems\Search\Services\SearchConfig:
-  index_keys: # Default keys witch will be populated within the json index file
+  index_keys: # Default keys which will be populated within the json index file
     - title # Title will be added by default if nothing else is defined
     - content # Additional index key
 ```
 
-Those keys are only for separating data within the index (more or less for your own structure - this keys won't be
-displayed in the search result!). The search prioritises the content based on the keys - `title` has the first priority
+Those keys are only for separating data within the index (more or less for your own structure - these keys won't be
+displayed in the search result!). The search prioritizes the content based on the keys - `title` has the first priority
 in this case and is therefore also displayed first in the result.
 
 By default, your index file is named `index.json` and will be placed at `/search/` within your project root directory.
 Add `/search` to your `.gitignore` to prevent index files from being pushed to your git repository.
 
-To Update or set the index keys based on the Class you can extend the Class and use the following method to set the
+### Available Config Variables
+
+Every config can be made via the `Pixelpoems\Search\Services\SearchConfig` class:
+
+| Name                        | Default     | Description |
+|-----------------------------|-------------|-------------|
+| enable_default_style        | `true`      | Enable default CSS styles |
+| index_keys                  | `['title']` | Keys to be indexed in the search |
+| enable_fluent               | `false`     | Enable Fluent localization support |
+| exclude_locale_from_index   | `[]`        | Locales to exclude from indexing |
+| enable_elemental            | `false`     | Enable Elemental blocks support |
+| exclude_elements_from_index | `[]`        | Element classes to exclude from indexing |
+| max_results_inline          | `10`        | Maximum results shown in inline search |
+| enable_toggle_sm            | `true`      | Enable toggle button on small screens |
+| enable_toggle_lg            | `false`     | Enable toggle button on large screens |
+| sm_lg_breakpoint            | `768`       | Breakpoint in pixels for small/large screens |
+
+Example configuration:
+
+```yml
+---
+Name: my-search-config
+---
+
+Pixelpoems\Search\Services\SearchConfig:
+  enable_default_style: false # Disables default styles
+  index_keys:
+    - title
+    - content
+  enable_fluent: true
+  exclude_locale_from_index:
+    - 'de_AT'
+    - 'de_DE'
+  enable_elemental: true
+  exclude_elements_from_index:
+    - 'Namespace\Elements\Element'
+  max_results_inline: 10
+```
+
+### Customizing Index Data
+
+To update or set the index keys based on the Class, you can extend the Class and use the following method to set the
 values. If you set extra values here, they won't get noticed by the js logic. Only the predefined keys will be
-recognised. `$data`will contain all preconfigured keys.
+recognized. `$data` will contain all preconfigured keys.
 
 ```php
 public function updateSearchIndexData(array &$data)
@@ -117,7 +190,7 @@ public function addSearchData($data)
 
 You can use the `SearchService::escapeHTML($string)` function to escape your content before adding it to the index.
 
-## Populate Task
+### Populate Task
 
 To create or update the search index use the "Search Populate" Task:
 
@@ -176,7 +249,143 @@ public function populateAdditionalData($pageIndexFileName, $locale, &$additional
 ```
 This will generate a custom Array Data with your context - in the ideal case the array contains the keys `id`, `link` and your defined `index_keys`.
 
-## Overwrite Template Files
+---
+
+## Advanced Configuration
+
+### Enable Search on DataObjects
+
+If you want to add data of a DataObject, you can add text like described in the [Configuration](#configuration) section when indexing a page or an element. Here you can add e.g. the `title` and `content` within the index process of a single page along with all other objects.
+
+```php
+public function addSearchData($data)
+{
+    $data = [];
+
+    foreach (DataObject::get() as $dataObject) {
+        $data[] = $dataObject->Title . ' '. $dataObject->Content;
+    }
+
+    $data['dataObjects'] = implode(' ', $data);
+
+    return $data;
+}
+```
+
+### Elemental Integration
+
+To enable indexing of Elemental blocks, add the following to your configuration yml:
+
+```yml
+Pixelpoems\Search\Services\SearchConfig:
+  enable_elemental: true
+```
+
+Furthermore, you can use `exclude_elements_from_index` to prevent specific Element classes from being indexed:
+
+```yml
+Pixelpoems\Search\Services\SearchConfig:
+  exclude_elements_from_index:
+    - Namespace\Elements\Element
+```
+
+And add the `SearchIndexExtension` to the Base Element Model:
+
+```yml
+DNADesign\Elemental\Models\BaseElement:
+  extensions:
+    - Pixelpoems\Search\Extensions\SearchIndexExtension
+```
+
+After adding the extension, you can use the `updateSearchIndexData` hook to specify your index data.
+
+#### Enable Virtual Element Indexing
+
+If you use Virtual Elements from DNADesign and you want to index the Connected Data for this element, you can add the
+following Extension to the base "ElementVirtual" Class. This will handle the default indexing with the "Linked Element" data:
+
+```yml
+DNADesign\ElementalVirtual\Model\ElementVirtual:
+  extensions:
+    - Pixelpoems\Search\Extensions\ElementVirtualExtension
+```
+
+### Fluent Integration
+
+To enable Fluent localization within the index and search process, add the following to your configuration yml:
+
+```yml
+Pixelpoems\Search\Services\SearchConfig:
+  enable_fluent: true
+```
+
+If you enabled Fluent through the config, the `Populate Search Task` will create an index file for every locale. To prevent
+a locale from being indexed, you can add the Locale title within the static variable `exclude_locale_from_index` like this:
+
+```yml
+Pixelpoems\Search\Services\SearchConfig:
+  exclude_locale_from_index:
+    - 'de_AT'
+    - 'de_DE'
+```
+
+By default, your index files are named `{locale}.json`, e.g. `de_AT.json`.
+
+### Toggle Configuration for Inline Search
+
+The inline search can be configured to show/hide the search bar with a toggle button based on screen size. This is useful for responsive designs where you want to save space on smaller screens.
+
+The toggle behavior is controlled by three configuration options:
+
+```yml
+Pixelpoems\Search\Services\SearchConfig:
+  enable_toggle_sm: true  # Enable toggle on small screens (below breakpoint)
+  enable_toggle_lg: false # Enable toggle on large screens (above breakpoint)
+  sm_lg_breakpoint: 768   # Breakpoint in pixels for small/large screens
+```
+
+- `enable_toggle_sm`: When `true`, the search bar will be hidden by default on small screens (below the breakpoint) and a toggle button will appear to show/hide it.
+- `enable_toggle_lg`: When `true`, the search bar will be hidden by default on large screens (above the breakpoint) and a toggle button will appear to show/hide it.
+- `sm_lg_breakpoint`: The screen width in pixels that defines the boundary between small and large screens (default: 768px).
+
+Example configurations:
+
+```yml
+# Show toggle button only on mobile devices
+Pixelpoems\Search\Services\SearchConfig:
+  enable_toggle_sm: true
+  enable_toggle_lg: false
+  sm_lg_breakpoint: 768
+```
+
+```yml
+# Show toggle button on all screen sizes
+Pixelpoems\Search\Services\SearchConfig:
+  enable_toggle_sm: true
+  enable_toggle_lg: true
+  sm_lg_breakpoint: 768
+```
+
+```yml
+# Disable toggle functionality (search always visible)
+Pixelpoems\Search\Services\SearchConfig:
+  enable_toggle_sm: false
+  enable_toggle_lg: false
+```
+
+To use the toggle configuration, make sure to include the `$SearchToggleAttr` in your inline search template if you overwrite it:
+
+```ss
+<div class="search-holder search-holder__inline" $SearchToggleAttr>
+    .....
+</div>
+```
+
+---
+
+## Customization
+
+### Overwrite Template Files
 
 To overwrite the default search templates you can create a `Pixelpoems/Search` folder within your project templates.
 
@@ -201,101 +410,11 @@ public function updateAjaxTemplateData(&$data)
 }
 ```
 
-All the Variables, that are added here can be accessed in your custom `Ajax/SerachList.ss`.
+All the variables that are added here can be accessed in your custom `Ajax/SearchList.ss`.
 
-## Inline Search
+### Modify Search Results
 
-This module includes an inline search. The listing within the inline search will display up to ten search results and
-a "See more..." item which navigates to the search page which will display all search results in a list.
-
-Include the InlineSearch Template within your template:
-```ss
-<% include Pixelpoems\Search\Includes\InlineSearch %>
-```
-
-## Enable Search on DataObjects
-
-If you want to add data of an DataObject you can add text like described in the [Configuration](#configuration) section indexing a page or an element.
-Here you can add e.g. the `title` and `content` within the index process of a single page along to all other objects.
-
-```php
-public function addSearchData($data)
-{
-    $data = [];
-
-    foreach (DataObject::get() as $dataObject) {
-        $data[] = $dataObject->Title . ' '. $dataObject->Content;
-    }
-
-    $data['dataObjects'] = implode(' ', $data);
-
-    return $data;
-}
-```
-
-## Config to enable Elemental
-
-To enable indexing elemental add the following to your configuration yml:
-
-```yml
-Pixelpoems\Search\Services\SearchConfig:
-  enable_elemental: true
-```
-
-Furthermore, you can use `exclude_elements_from_index` to prevent specific Element Classes from being indexed:
-
-```yml
-Pixelpoems\Search\Services\SearchConfig:
-  exclude_elements_from_index:
-    - Namespace\Elements\Element
-```
-
-And add the `SearchIndexExtension` to the Base Element Model:
-
-```yml
-DNADesign\Elemental\Models\BaseElement:
-  extensions:
-    - Pixelpoems\Search\Extensions\SearchIndexExtension
-```
-
-After adding the extension you can use the `updateSearchIndexData` hook to specify your index data.
-
-### Enable Virtual Element Indexing
-
-If you use Virtual Elements from DNADesign and you want to index the Connected Data for this element you can add the
-following Extension to the base "ElementVirtual" Class, this will handle the default indexing with the "Linked Element"
-Data.
-
-```yml
-DNADesign\ElementalVirtual\Model\ElementVirtual:
-  extensions:
-    - Pixelpoems\Search\Extensions\ElementVirtualExtension
-```
-
-## Config to enable Fluent
-
-To enable fluent within the index and search process add the following to your configuration yml:
-
-```yml
-Pixelpoems\Search\Services\SearchConfig:
-  enable_fluent: true
-```
-
-If you enabled fluent threw the config the `Populate Search Task` will create an index file for every locale. To prevent
-a locale from beeing indexed you can add the Locale title within the static variable `exclude_locale_from_index` like
-this:
-
-```yml
-Pixelpoems\Search\Services\SearchConfig:
-  exclude_locale_from_index:
-    - 'de_AT'
-    - 'de_DE'
-```
-
-By default, your index files are named `{locale}.json`, e.g. `de_AT.json`.
-
-## Modify Search Result
-There are multiple hooks to modify the search result before sending the generated list to the template:
+There are multiple hooks to modify the search result before sending the generated list to the template.
 
 Add an extension to SearchService:
 ```yml
@@ -304,69 +423,43 @@ Pixelpoems\Search\Services\SearchService:
     - Namespace\Extensions\SearchServiceExtension
 ```
 
-### Modify List BEFORE limiting result
+#### Modify List BEFORE Limiting Result
 
-Use the hook `updateSearchResultBeforeLimit` for instance to filter the results on a specific Mulitsite if you use e.g. https://github.com/symbiote/silverstripe-multisites
+Use the hook `updateSearchResultBeforeLimit` for instance to filter the results on a specific Multisite if you use e.g. https://github.com/symbiote/silverstripe-multisites:
+
 ```php
-    public function updateSearchResultBeforeLimit(&$list): void
-    {
-        $currentSiteID = Multisites::inst()->getCurrentSiteId();
-        $list = $list->filter(['SiteID' => $currentSiteID]);
-    }
+public function updateSearchResultBeforeLimit(&$list): void
+{
+    $currentSiteID = Multisites::inst()->getCurrentSiteId();
+    $list = $list->filter(['SiteID' => $currentSiteID]);
+}
 ```
+
 The limitation of the list (for Inline Search) will be added after the hook.
 
+#### Modify List AFTER Limiting Result
 
-### Modify List AFTER limiting result
-Use the hook `updateSearchResultAfterLimit` for instance to filter the results after the limitation has been added to the list.
+Use the hook `updateSearchResultAfterLimit` for instance to filter the results after the limitation has been added to the list:
+
 ```php
-    public function updateSearchResultAfterLimit(&$list): void
-    {
-        // Do some extra filter or attachment here
-    }
+public function updateSearchResultAfterLimit(&$list): void
+{
+    // Do some extra filter or attachment here
+}
 ```
-This will hook will only be called on a request that is made by the inline search!
-If you want to modify the result after limitation for inline search AND on the Search page use the hook `updateSearchResult`:
+
+This hook will only be called on a request that is made by the inline search!
+
+If you want to modify the result after limitation for inline search AND on the Search page, use the hook `updateSearchResult`:
+
 ```php
-    public function updateSearchResult(&$list): void
-    {
-        // Do some extra filter or attachment here
-    }
+public function updateSearchResult(&$list): void
+{
+    // Do some extra filter or attachment here
+}
 ```
 
-## Available Config Variables
-
-Every config can be made via the `Pixelpoems\Search\Services\SearchConfig` class:
-
-| Name                        | Default     |
-|-----------------------------|-------------|
-| enable_default_style        | `true`      |
-| index_keys                  | `['title']` |
-| enable_fluent               | `false`     |
-| exclude_locale_from_index   | `[]`        |
-| enable_elemental            | `false`     |
-| exclude_elements_from_index | `[]`        |
-| max_results_inline          | `10`        |
-
-```yml
 ---
-Name: my-search-config
----
-
-Pixelpoems\Search\Services\SearchConfig:
-  enable_default_style: false # Disables default styles
-  index_keys:
-    - title
-    - content
-  enable_fluent: true
-  exclude_locale_from_index:
-    - 'de_AT'
-    - 'de_DE'
-  enable_elemental: true
-  exclude_elements_from_index:
-    - 'Namespace\Elements\Element'
-  max_results_inline: 10
-```
 
 ## Reporting Issues
 

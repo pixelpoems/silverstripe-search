@@ -1,0 +1,10 @@
+es:
+  Pixelpoems\Search\Pages\SearchPage:
+    SINGULARNAME: 'Página de búsqueda'
+    PLURALNAME: 'Páginas de búsqueda'
+    Search: 'Buscar'
+    Matches: 'Resultados'
+    NoResults: 'Lo sentimos, no se ha encontrado ningún resultado para tu búsqueda'
+    MoreResults: 'más resultados'
+    SpecifySearch: 'Por favor, especifica el término de búsqueda'
+

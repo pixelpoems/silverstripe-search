@@ -31,7 +31,7 @@ class PopulateService extends Controller
         }
     }
 
-    private function populatePageData($fileName, $locale)
+    private function populatePageData(string $fileName = '', $locale = null)
     {
         $data = $this->getData(Page::class, $locale);
         if ($fileName === '' || $fileName === '0') {
