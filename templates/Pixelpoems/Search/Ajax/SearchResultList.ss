@@ -1,21 +1,21 @@
 <div>
     <span class="search-result__count">
         <% if $IsInline %>
-            <% if $List.Count < 10 %>
-                <%t Pixelpoems\Search\Pages\SearchPage.Matches 'Matches' %>: $List.Count
+            <% if $ResultList.Count < 10 %>
+                <%t Pixelpoems\Search\Pages\SearchPage.Matches 'Matches' %>: $ResultList.Count
             <% end_if %>
         <% else %>
-            <% if $List.Count == 50 %>
+            <% if $ResultList.Count == 50 %>
                 <%t Pixelpoems\Search\Pages\SearchPage.SpecifySearch 'SpecifySearch' %>
             <% else %>
-                <%t Pixelpoems\Search\Pages\SearchPage.Matches 'Matches' %>: $List.Count
+                <%t Pixelpoems\Search\Pages\SearchPage.Matches 'Matches' %>: $ResultList.Count
             <% end_if %>
         <% end_if %>
     </span>
 
-    <% if $List && $List.Count > 0 %>
+    <% if $ResultList %>
         <ul class="search-result__list">
-            <% loop $List %>
+            <% loop $ResultList %>
                 <li>
                     <a href="$Link">
                         <span class="search-result__headline">$Title</span>

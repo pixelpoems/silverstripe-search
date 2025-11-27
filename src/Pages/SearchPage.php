@@ -2,11 +2,11 @@
 
 namespace Pixelpoems\Search\Pages;
 
-use Pixelpoems\Search\Controllers\SearchPageController;
+use Page;
 use SilverStripe\ORM\DataObject;
 use Symbiote\Multisites\Multisites;
 
-class SearchPage extends \Page
+class SearchPage extends Page
 {
     private static string $table_name = 'Search_SearchPage';
 
@@ -14,7 +14,7 @@ class SearchPage extends \Page
 
     private static string $plural_name = 'Search Pages';
 
-    private static string $icon_class = 'font-icon-search';
+    private static string $cms_icon_class = 'font-icon-search';
 
     private static array $allowed_children = [];
 
@@ -26,19 +26,23 @@ class SearchPage extends \Page
     public static function find_link($urlSegment = false)
     {
         $page = self::get_if_search_page_exists();
-        if (!$page) return null;
+        if (!$page) {
+            return null;
+        }
+
         return ($urlSegment) ? $page->URLSegment : $page->Link();
     }
-    
+
     protected static function get_if_search_page_exists()
     {
-        if(class_exists(Multisites::class)) {
+        if (class_exists(Multisites::class)) {
             // Return the first search page found in the current subsite
-            if ($page = DataObject::get_one(self::class, ['SiteID' => Multisites::inst()->getCurrentSiteID()])) return $page;
-
-        } else {
+            if ($page = DataObject::get_one(self::class, ['SiteID' => Multisites::inst()->getCurrentSiteID()])) {
+                return $page;
+            }
+        } elseif ($page = DataObject::get_one(self::class)) {
             // Return the first search page found
-            if ($page = DataObject::get_one(self::class)) return $page;
+            return $page;
         }
 
         return null;

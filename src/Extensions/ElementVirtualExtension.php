@@ -2,9 +2,9 @@
 
 namespace Pixelpoems\Search\Extensions;
 
-use SilverStripe\ORM\DataExtension;
+use SilverStripe\Core\Extension;
 
-class ElementVirtualExtension extends DataExtension
+class ElementVirtualExtension extends Extension
 {
     public function addSearchData($data)
     {

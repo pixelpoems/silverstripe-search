@@ -12,7 +12,7 @@ class SearchInitExtension extends Extension
     {
         Requirements::javascript('pixelpoems/silverstripe-search:client/dist/javascript/search.min.js');
 
-        if ($this->owner->response && SearchConfig::getIsDefaultStyleEnabled()) {
+        if ($this->getOwner()->response && SearchConfig::getIsDefaultStyleEnabled()) {
             Requirements::css('pixelpoems/silverstripe-search:client/dist/css/search.min.css');
         }
     }

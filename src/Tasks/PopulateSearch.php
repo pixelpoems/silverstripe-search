@@ -1,33 +1,35 @@
 <?php
 namespace Pixelpoems\Search\Tasks;
 
-use DNADesign\Elemental\Models\BaseElement;
-use Page;
+use Override;
 use Pixelpoems\Search\Services\PopulateService;
 use Pixelpoems\Search\Services\SearchConfig;
 use ReflectionException;
-use SilverStripe\Core\ClassInfo;
 use SilverStripe\Dev\BuildTask;
-use SilverStripe\ORM\DataObject;
-use SilverStripe\Versioned\Versioned;
-use TractorCow\Fluent\Extension\FluentExtension;
-use TractorCow\Fluent\Extension\FluentVersionedExtension;
+use SilverStripe\PolyExecution\PolyOutput;
+use Symfony\Component\Console\Input\InputInterface;
 use TractorCow\Fluent\Model\Locale;
 use TractorCow\Fluent\State\FluentState;
+use Symfony\Component\Console\Command\Command;
 
 class PopulateSearch extends BuildTask
 {
-    protected $title = '[SEARCH] Populate';
+    protected string $title = '[SEARCH] Populate';
 
-    protected $description = 'Crate, Re-Create and prepare the silverstripe search index at each run.';
+    protected static string $description = 'Create, Re-Create and prepare the silverstripe search index at each run.';
 
     private static string $segment = "search-populate";
+
+    protected function execute(InputInterface $input, PolyOutput $output): int
+    {
+        return $this->run($input, $output);
+    }
 
     /**
      * @inheritDoc
      * @throws ReflectionException
      */
-    public function run($request)
+    public function run(InputInterface $input, PolyOutput $output): int
     {
         $service = PopulateService::create();
 
@@ -48,7 +50,7 @@ class PopulateSearch extends BuildTask
             }
 
             foreach ($locales as $locale) {
-                FluentState::singleton()->withState(function(FluentState $state) use ($locale, $service) {
+                FluentState::singleton()->withState(function(FluentState $state) use ($locale, $service): void {
                     $state->setLocale($locale->Locale);
                     $service->log('START POPULATING: ' . $locale . "\n");
                     $service->populate($locale->Locale, $locale->Locale);
@@ -63,5 +65,7 @@ class PopulateSearch extends BuildTask
 
         $service->log("##########################################\n");
         $service->log('Successfully written search index!');
+
+        return Command::SUCCESS;
     }
 }

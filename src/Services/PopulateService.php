@@ -34,9 +34,12 @@ class PopulateService extends Controller
     private function populatePageData(string $fileName = '', $locale = null)
     {
         $data = $this->getData(Page::class, $locale);
+        if ($fileName === '' || $fileName === '0') {
+            $fileName = SearchService::getIndexFile('index');
+        } else {
+            $fileName = SearchService::getIndexFile($fileName);
+        }
 
-        if(!$fileName) $fileName = SearchService::getIndexFile('index');
-        else $fileName = SearchService::getIndexFile($fileName);
         $this->log('Data Entities (Pages): ' . count($data));
 
         return [$fileName, $data];
@@ -54,16 +57,17 @@ class PopulateService extends Controller
         $availableElementClasses = ClassInfo::subclassesFor(BaseElement::class);
 
         foreach ($availableElementClasses as $class) {
-            if($class !== BaseElement::class) {
-                if (!in_array($class, $excluded_elements ?? [])) {
-                    $this->log($class);
-                    $data = array_merge($data, $this->getData($class, $locale));
-                }
+            if ($class !== BaseElement::class && !in_array($class, $excluded_elements ?? [])) {
+                $this->log($class);
+                $data = array_merge($data, $this->getData($class, $locale));
             }
         }
+        if ($fileName === '' || $fileName === '0') {
+            $fileName = SearchService::getIndexFile('index-elemental');
+        } else {
+            $fileName = SearchService::getIndexFile($fileName . '-elemental');
+        }
 
-        if(!$fileName) $fileName = SearchService::getIndexFile('index-elemental');
-        else $fileName = SearchService::getIndexFile($fileName . '-elemental');
         $this->log('Data Entities (Elements): ' . count($data));
         $this->writeSearchFile($data, $fileName);
 
@@ -94,11 +98,11 @@ class PopulateService extends Controller
 
             if(SearchConfig::isFluentEnabled()) {
 
-                if($object->getExtensionInstance(FluentVersionedExtension::class)) {
+                if ($object->getExtensionInstance(FluentVersionedExtension::class)) {
                     if($object->isPublishedInLocale($locale)) {
                         $data[] = $this->getSearchIndexOfDataObject($class, $object->ID);
                     }
-                } else if ($object->getExtensionInstance(FluentExtension::class)) {
+                } elseif ($object->getExtensionInstance(FluentExtension::class)) {
                     if($object->isPublished($locale)) {
                         $data[] = $this->getSearchIndexOfDataObject($class, $object->ID);
                     }
@@ -110,14 +114,21 @@ class PopulateService extends Controller
                 $data[] = $this->getSearchIndexOfDataObject($class, $object->ID);
             }
         }
+
         return array_filter($data);
     }
 
     private function getSearchIndexOfDataObject($class, $objectID)
     {
         $object = DataObject::get_by_id($class, $objectID);
-        if(!$object) return;
-        if(!$object->getSearchIndexData()) return;
+        if (!$object) {
+            return null;
+        }
+
+        if (!$object->getSearchIndexData()) {
+            return null;
+        }
+
         return $object->getSearchIndexData();
     }
 
@@ -129,7 +140,9 @@ class PopulateService extends Controller
         }
 
         // Check if file exists and clean content
-        if(file_exists($fileName)) file_put_contents($fileName, '');
+        if (file_exists($fileName)) {
+            file_put_contents($fileName, '');
+        }
 
         $file = fopen($fileName, 'w');
         fwrite($file, json_encode($data));

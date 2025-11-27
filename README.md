@@ -31,9 +31,8 @@ specified documentation below.
 * [Credits](#credits)
 
 ## Requirements
-
-* Silverstripe CMS ^4.0 || ^5.0
-* Silverstripe Framework ^4.0 || ^5.0
+* Silverstripe CMS ^6.0
+* Silverstripe Framework ^6.0
 
 ## Installation
 
