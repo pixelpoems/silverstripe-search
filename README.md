@@ -194,10 +194,10 @@ You can use the `SearchService::escapeHTML($string)` function to escape your con
 
 To create or update the search index use the "Search Populate" Task:
 
-```/dev/tasks/search-populate```
+```/dev/tasks/Pixelpoems-Search-Tasks-PopulateSearch```
 
 ```shell
-php vendor/silverstripe/framework/cli-script.php dev/tasks/search-populate
+vendor/bin/sake tasks:Pixelpoems-Search-Tasks-PopulateSearch
 ```
 
 This Task will create based on your configuration an `index.json` and an `index-elemental.json` (if elemental is
