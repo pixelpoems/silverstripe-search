@@ -5,8 +5,11 @@ namespace Pixelpoems\Search\Services;
 use DNADesign\Elemental\Models\BaseElement;
 use SilverStripe\Control\Controller;
 use SilverStripe\Core\ClassInfo;
+use SilverStripe\Core\Convert;
+use SilverStripe\Core\Environment;
 use SilverStripe\Core\Injector\Injectable;
 use SilverStripe\ORM\DataObject;
+use SilverStripe\ORM\DB;
 use SilverStripe\Versioned\Versioned;
 use Page;
 
@@ -31,7 +34,7 @@ class PopulateService extends Controller
         }
     }
 
-    private function populatePageData(string $fileName = '', $locale = null)
+    private function populatePageData($fileName, $locale)
     {
         $data = $this->getData(Page::class, $locale);
         if ($fileName === '' || $fileName === '0') {
@@ -56,10 +59,23 @@ class PopulateService extends Controller
         $excluded_elements = SearchConfig::getExcludedElements();
         $availableElementClasses = ClassInfo::subclassesFor(BaseElement::class);
 
+        // When a locale is set, collect all ElementalArea IDs that are actually
+        // published for that locale. We query every *_Localised table that has an
+        // ElementalAreaID column – this way the filter is generic and does not need
+        // to know about specific page types. Elements whose ParentID is not in this
+        // set belong to a different locale and are skipped.
+        $filter = [];
+        if ($locale && SearchConfig::isFluentEnabled()) {
+            $validAreaIds = $this->getPublishedAreaIdsForLocale($locale);
+            $this->log('Valid ElementalArea IDs for locale ' . $locale . ': ' . count($validAreaIds));
+            // Pass an impossible match when the list is empty so no elements are indexed.
+            $filter = ['ParentID' => $validAreaIds ?: [0]];
+        }
+
         foreach ($availableElementClasses as $class) {
             if ($class !== BaseElement::class && !in_array($class, $excluded_elements ?? [])) {
                 $this->log($class);
-                $data = array_merge($data, $this->getData($class, $locale));
+                $data = array_merge($data, $this->getData($class, $locale, $filter));
             }
         }
         if ($fileName === '' || $fileName === '0') {
@@ -72,6 +88,44 @@ class PopulateService extends Controller
         $this->writeSearchFile($data, $fileName);
 
         $this->log($fileName . "\n");
+    }
+
+    /**
+     * Returns all ElementalArea IDs that are referenced by pages published in
+     * the given locale. Discovers eligible tables dynamically by looking for
+     * *_Localised tables in the current database that have an ElementalAreaID column.
+     *
+     * @return int[]
+     */
+    private function getPublishedAreaIdsForLocale(string $locale): array
+    {
+        $dbName = Environment::getEnv('SS_DATABASE_NAME');
+        $safeLocale = Convert::raw2sql($locale);
+
+        // Find every *_Localised table that carries an ElementalAreaID column.
+        $tables = DB::query("
+            SELECT TABLE_NAME
+            FROM INFORMATION_SCHEMA.COLUMNS
+            WHERE TABLE_SCHEMA = '{$dbName}'
+              AND COLUMN_NAME   = 'ElementalAreaID'
+              AND TABLE_NAME   LIKE '%\_Localised'
+        ");
+
+        $areaIds = [];
+        foreach ($tables as $row) {
+            $table = $row['TABLE_NAME'];
+            $rows = DB::query(
+                "SELECT DISTINCT `ElementalAreaID`
+                 FROM `{$table}`
+                 WHERE `Locale` = '{$safeLocale}'
+                   AND `ElementalAreaID` > 0"
+            );
+            foreach ($rows as $r) {
+                $areaIds[(int) $r['ElementalAreaID']] = true;
+            }
+        }
+
+        return array_keys($areaIds);
     }
 
     public function getData($class, $locale = null, $filter = [])
@@ -88,14 +142,6 @@ class PopulateService extends Controller
 
         $data = [];
         foreach($objects as $object) {
-            // Check if $Object is an Element
-            if($object instanceof BaseElement) {
-                // CHeck if the page where the element is placed is Published and ShowInSearch
-                if(!$object->ParentID || !$object->Parent()->getOwnerPage()?->isPublished() || !$object->Parent()->getOwnerPage()->ShowInSearch) {
-                    continue;
-                }
-            }
-
             if(SearchConfig::isFluentEnabled()) {
 
                 if ($object->getExtensionInstance(FluentVersionedExtension::class)) {
