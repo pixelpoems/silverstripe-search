@@ -29,7 +29,8 @@ class SearchService extends Controller
         $update = strip_tags($string);
         $update = str_replace("&nbsp;", '', $update);
         $update = str_replace("\n", ' ', $update);
-        return str_replace("\/", ' ', $update);
+        $update = str_replace("\/", ' ', $update);
+        return preg_replace('/\p{Cf}/u', '', $update);
     }
 
     public function getSearchResult()
@@ -47,12 +48,13 @@ class SearchService extends Controller
         foreach (SearchConfig::getSearchKeys() as $key) {
             foreach ($src as $item) {
                 if(is_array($item->$key)) { // Prevent Error on wrong creation of object
-                   continue;
+                    continue;
                 }
 
                 if ($this->value && $item->$key) {
                     $search = preg_quote(trim($this->value), '/');
                     $text = preg_replace('/\s+/', ' ', (string) $item->$key); // Normalize spaces
+                    $text = preg_replace('/\p{Cf}/u', '', $text); // Strip soft hyphens and other format chars
 
                     $pregMatch = preg_match(sprintf('/%s/i', $search), (string) $text);
                 } else {
@@ -68,6 +70,10 @@ class SearchService extends Controller
                         $canView = $entity->hasMethod('canView') ? $entity->canView() : true;
                         if (!$canView) {
                             continue;
+                        }
+
+                        if (!$entity->Title && !empty($item->title)) {
+                            $entity->Title = $item->title;
                         }
 
                         $entity->UniqueID = $item->class . '--' . $item->id;
@@ -136,12 +142,13 @@ class SearchService extends Controller
         }
 
         $index = file_get_contents($fileName, '');
-        $data = json_decode($index);
+        $data = json_decode($index) ?? [];
 
         // Check if elemental index file exists
         if(SearchConfig::isElementalEnabled() && file_exists(self::getIndexFile($name . '-elemental'))) {
             $indexElemental = file_get_contents(self::getIndexFile($name . '-elemental'), '');
-            $data = array_merge($data, json_decode($indexElemental));
+            $indexData = json_decode($indexElemental) ?? [];
+            $data = array_merge($data, $indexData);
         }
 
         return $data;
