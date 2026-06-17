@@ -102,26 +102,28 @@ class PopulateService extends Controller
         $dbName = Environment::getEnv('SS_DATABASE_NAME');
         $safeLocale = Convert::raw2sql($locale);
 
-        // Find every *_Localised table that carries an ElementalAreaID column.
+        // Find every *_Localised table that carries any *ElementalAreaID column
+        // (e.g. ElementalAreaID, GridElementalAreaID, …).
         $tables = DB::query("
-            SELECT TABLE_NAME
+            SELECT TABLE_NAME, COLUMN_NAME
             FROM INFORMATION_SCHEMA.COLUMNS
             WHERE TABLE_SCHEMA = '{$dbName}'
-              AND COLUMN_NAME   = 'ElementalAreaID'
+              AND COLUMN_NAME   LIKE '%ElementalAreaID'
               AND TABLE_NAME   LIKE '%\_Localised'
         ");
 
         $areaIds = [];
         foreach ($tables as $row) {
             $table = $row['TABLE_NAME'];
+            $column = $row['COLUMN_NAME'];
             $rows = DB::query(
-                "SELECT DISTINCT `ElementalAreaID`
+                "SELECT DISTINCT `{$column}`
                  FROM `{$table}`
                  WHERE `Locale` = '{$safeLocale}'
-                   AND `ElementalAreaID` > 0"
+                   AND `{$column}` > 0"
             );
             foreach ($rows as $r) {
-                $areaIds[(int) $r['ElementalAreaID']] = true;
+                $areaIds[(int) $r[$column]] = true;
             }
         }
 
