@@ -64,12 +64,21 @@ class PopulateService extends Controller
         // ElementalAreaID column – this way the filter is generic and does not need
         // to know about specific page types. Elements whose ParentID is not in this
         // set belong to a different locale and are skipped.
+        // If no such *_Localised/*ElementalAreaID column exists at all, this Fluent
+        // setup doesn't translate ElementalArea assignment (the common case: areas
+        // are shared across locales, individual element fields are translated
+        // instead). In that case the filter is skipped entirely - getData() already
+        // applies correct per-locale filtering via Fluent's isPublishedInLocale()/
+        // isPublished(), so there's nothing more to restrict here.
         $filter = [];
         if ($locale && SearchConfig::isFluentEnabled()) {
-            $validAreaIds = $this->getPublishedAreaIdsForLocale($locale);
-            $this->log('Valid ElementalArea IDs for locale ' . $locale . ': ' . count($validAreaIds));
-            // Pass an impossible match when the list is empty so no elements are indexed.
-            $filter = ['ParentID' => $validAreaIds ?: [0]];
+            $localisedAreaColumns = $this->getLocalisedElementalAreaColumns();
+            if ($localisedAreaColumns) {
+                $validAreaIds = $this->getPublishedAreaIdsForLocale($locale, $localisedAreaColumns);
+                $this->log('Valid ElementalArea IDs for locale ' . $locale . ': ' . count($validAreaIds));
+                // Pass an impossible match when the list is empty so no elements are indexed.
+                $filter = ['ParentID' => $validAreaIds ?: [0]];
+            }
         }
 
         foreach ($availableElementClasses as $class) {
@@ -91,19 +100,21 @@ class PopulateService extends Controller
     }
 
     /**
-     * Returns all ElementalArea IDs that are referenced by pages published in
-     * the given locale. Discovers eligible tables dynamically by looking for
-     * *_Localised tables in the current database that have an ElementalAreaID column.
+     * Finds *_Localised tables that carry an *ElementalAreaID column, i.e. Fluent
+     * setups where ElementalArea assignment itself is a translated field
+     * (e.g. ElementalAreaID, GridElementalAreaID, …).
      *
-     * @return int[]
+     * An empty result means this setup doesn't translate ElementalArea assignment
+     * at all, so callers should skip locale-based area filtering rather than
+     * treating it as "no areas published for this locale".
+     *
+     * @return array<array{TABLE_NAME: string, COLUMN_NAME: string}>
      */
-    private function getPublishedAreaIdsForLocale(string $locale): array
+    private function getLocalisedElementalAreaColumns(): array
     {
         $dbName = Environment::getEnv('SS_DATABASE_NAME');
-        $safeLocale = Convert::raw2sql($locale);
 
-        // Find every *_Localised table that carries any *ElementalAreaID column
-        // (e.g. ElementalAreaID, GridElementalAreaID, …).
+        $columns = [];
         $tables = DB::query("
             SELECT TABLE_NAME, COLUMN_NAME
             FROM INFORMATION_SCHEMA.COLUMNS
@@ -111,9 +122,27 @@ class PopulateService extends Controller
               AND COLUMN_NAME   LIKE '%ElementalAreaID'
               AND TABLE_NAME   LIKE '%\_Localised'
         ");
+        foreach ($tables as $row) {
+            $columns[] = $row;
+        }
+
+        return $columns;
+    }
+
+    /**
+     * Returns all ElementalArea IDs that are referenced by pages published in
+     * the given locale, using the given *_Localised/*ElementalAreaID columns
+     * (see getLocalisedElementalAreaColumns()).
+     *
+     * @param array<array{TABLE_NAME: string, COLUMN_NAME: string}> $localisedAreaColumns
+     * @return int[]
+     */
+    private function getPublishedAreaIdsForLocale(string $locale, array $localisedAreaColumns): array
+    {
+        $safeLocale = Convert::raw2sql($locale);
 
         $areaIds = [];
-        foreach ($tables as $row) {
+        foreach ($localisedAreaColumns as $row) {
             $table = $row['TABLE_NAME'];
             $column = $row['COLUMN_NAME'];
             $rows = DB::query(
