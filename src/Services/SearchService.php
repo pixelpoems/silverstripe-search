@@ -89,10 +89,11 @@ class SearchService extends Controller
                 } elseif (($this->value && $item->$key) && isset($item->link) && $pregMatch) {
                     // If there is a link given this is no DataObject just a custom item
                     // Check if Entity does not already exist in list
+                    $uniqueID = sprintf('%s--%s', $item->class ?? 'custom', $item->id);
                     $existingIDs = $list->map('UniqueID', 'UniqueID')->toArray();
-                    if (!in_array(sprintf('%s--%s', $item->class, $item->id), $existingIDs)) {
+                    if (!in_array($uniqueID, $existingIDs)) {
                         $obj = new ArrayData();
-                        $obj->UniqueID = $item->class . '--' . $item->id;
+                        $obj->UniqueID = $uniqueID
                         $obj->ID = $item->id;
                         $obj->Title = $item->title;
                         $obj->Content = $item->content;
