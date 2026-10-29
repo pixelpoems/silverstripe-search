@@ -20,7 +20,7 @@ class PopulateService extends Controller
     /**
      * @throws ReflectionException
      */
-    public function populate(string $fileName = '', string $locale = null)
+    public function populate(string $fileName = '', ?string $locale = null)
     {
         [$pageIndexFileName, $pageData] = $this->populatePageData($fileName, $locale);
         $additionalData = [];
