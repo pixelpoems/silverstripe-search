@@ -137,6 +137,31 @@ vendor/bin/sake tasks:Pixelpoems-Search-Tasks-PopulateSearch
 This Task will create based on your configuration an `index.json` and an `index-elemental.json` (if elemental is
 enabled) or `locale.json` and `locale-elemental.json` (if fluent is enabled).
 
+### Populate as Queued Job (optional)
+
+If [symbiote/silverstripe-queuedjobs](https://github.com/symbiote/silverstripe-queuedjobs) is installed, the index
+can also be populated with the `Pixelpoems\Search\Jobs\PopulateSearchJob`. Without the queuedjobs module the job is
+simply not available, the task works as before.
+
+Queue it once via the Jobs admin in the CMS, or let queuedjobs create it automatically with `defaultJobs`.
+The constructor argument is a repeat interval in seconds (e.g. `86400` = re-run daily, omit for a single run):
+
+```yml
+SilverStripe\Core\Injector\Injector:
+  Symbiote\QueuedJobs\Services\QueuedJobService:
+    properties:
+      defaultJobs:
+        PopulateSearch:
+          type: 'Pixelpoems\Search\Jobs\PopulateSearchJob'
+          filter:
+            JobTitle: '[SEARCH] Populate search index'
+          construct:
+            repeat: 86400
+          startDateFormat: 'Y-m-d H:i:s'
+          startTimeString: 'tomorrow 04:00'
+          recreate: 1
+```
+
 You can extend the search population and add additional Data like that:
 ```yml
 Pixelpoems\Search\Services\PopulateService:

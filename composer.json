@@ -20,6 +20,9 @@
         "silverstripe/cms": "^6.0",
         "silverstripe/framework": "^6.0"
     },
+    "suggest": {
+        "symbiote/silverstripe-queuedjobs": "Run the search index population as a queued job (PopulateSearchJob)"
+    },
     "require-dev": {
         "phpunit/phpunit": "*"
     },

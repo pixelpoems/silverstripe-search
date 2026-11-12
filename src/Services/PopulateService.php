@@ -11,11 +11,64 @@ use SilverStripe\Core\Injector\Injectable;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\DB;
 use SilverStripe\Versioned\Versioned;
+use TractorCow\Fluent\Model\Locale;
+use TractorCow\Fluent\State\FluentState;
 use Page;
 
 class PopulateService extends Controller
 {
     use Injectable;
+
+    /**
+     * Optional log handler (e.g. a queued job's addMessage). Defaults to echo.
+     * @var callable|null
+     */
+    protected $logCallback = null;
+
+    public function setLogCallback(?callable $callback): static
+    {
+        $this->logCallback = $callback;
+        return $this;
+    }
+
+    /**
+     * Populates the search index for all (non excluded) locales, or without locale if Fluent is disabled.
+     * Used by the PopulateSearch task and the PopulateSearchJob.
+     */
+    public function populateAll(): void
+    {
+        if (SearchConfig::isFluentEnabled()) {
+            $this->log("##########################################");
+            $this->log("Fluent is enabled.");
+            $this->log("##########################################\n");
+
+            $exclude_locale_from_index = SearchConfig::getExcludedLocales();
+
+            if ($exclude_locale_from_index) {
+                $locales = Locale::get()->exclude(['Locale' => $exclude_locale_from_index]);
+                $this->log("There are some locales excluded from indexing: \n" . implode(', ', $exclude_locale_from_index));
+                $this->log("##########################################\n");
+            } else {
+                $locales = Locale::get();
+            }
+
+            foreach ($locales as $locale) {
+                FluentState::singleton()->withState(function (FluentState $state) use ($locale): void {
+                    $state->setLocale($locale->Locale);
+                    $this->log('START POPULATING: ' . $locale->Locale . "\n");
+                    $this->populate($locale->Locale, $locale->Locale);
+                    $this->log($locale->Locale . ': SUCCESS' . "\n");
+                });
+            }
+        } else {
+            $this->log("START POPULATING\n");
+            $this->populate();
+            $this->log('SUCCESS' . "\n");
+        }
+
+        $this->log("##########################################\n");
+        $this->log('Successfully written search index!');
+    }
 
     /**
      * @throws ReflectionException
@@ -228,6 +281,11 @@ class PopulateService extends Controller
 
     public function log($msg)
     {
+        if ($this->logCallback) {
+            call_user_func($this->logCallback, trim((string) $msg));
+            return;
+        }
+
         echo $msg . "\n";
     }
 }
